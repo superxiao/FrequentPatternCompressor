@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
+		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
+		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,10 @@
 /* Begin PBXFileReference section */
 		D82DB6221BD18DA400249E13 /* FrequentPatternCompressor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrequentPatternCompressor; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82DB6251BD18DA400249E13 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D82DB62C1BD1956200249E13 /* Trie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trie.cpp; sourceTree = "<group>"; };
+		D82DB62D1BD1956200249E13 /* Trie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trie.hpp; sourceTree = "<group>"; };
+		D82DB62F1BD1961E00249E13 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		D82DB6301BD1961E00249E13 /* Node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +64,10 @@
 			isa = PBXGroup;
 			children = (
 				D82DB6251BD18DA400249E13 /* main.cpp */,
+				D82DB62C1BD1956200249E13 /* Trie.cpp */,
+				D82DB62D1BD1956200249E13 /* Trie.hpp */,
+				D82DB62F1BD1961E00249E13 /* Node.cpp */,
+				D82DB6301BD1961E00249E13 /* Node.hpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -118,7 +128,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
+				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
