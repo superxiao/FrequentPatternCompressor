@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80469A31BD33474006AD5D9 /* PrefixSpan.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D80469A31BD33474006AD5D9 /* PrefixSpan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrefixSpan.cpp; sourceTree = "<group>"; };
+		D80469A41BD33474006AD5D9 /* PrefixSpan.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PrefixSpan.hpp; sourceTree = "<group>"; };
 		D82DB6221BD18DA400249E13 /* FrequentPatternCompressor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrequentPatternCompressor; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82DB6251BD18DA400249E13 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D82DB62C1BD1956200249E13 /* Trie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trie.cpp; sourceTree = "<group>"; };
@@ -66,6 +69,8 @@
 				D82DB6251BD18DA400249E13 /* main.cpp */,
 				D82DB62C1BD1956200249E13 /* Trie.cpp */,
 				D82DB62D1BD1956200249E13 /* Trie.hpp */,
+				D80469A31BD33474006AD5D9 /* PrefixSpan.cpp */,
+				D80469A41BD33474006AD5D9 /* PrefixSpan.hpp */,
 				D82DB62F1BD1961E00249E13 /* Node.cpp */,
 				D82DB6301BD1961E00249E13 /* Node.hpp */,
 			);
@@ -131,6 +136,7 @@
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
+				D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +253,7 @@
 				D82DB62B1BD18DA400249E13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

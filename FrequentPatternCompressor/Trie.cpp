@@ -107,7 +107,6 @@ void Trie::AddChildNode(char c){
     Node* newChild = new Node();
     currNode->children[c] = newChild;
     //currNode->childList.add(newChild);
-    newChild->patternPositions = vector<int>(); // TODO pattern positions
     newChild->string = currNode->string + c;
     newChild->parent = currNode;
 }
@@ -130,6 +129,6 @@ void Trie::AddPatternPositionToChild(char c, Position position){
     currNode->children[c]->patternPositions.push_back(position);
 }
 
-void Trie::PruneInfrequentChildren(){
+void Trie::PruneInfrequentChildren(int minSupport){
     // TODO Not implemented
 }

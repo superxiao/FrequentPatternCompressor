@@ -13,20 +13,20 @@
 #include <vector>
 #include "Node.hpp"
 
-struct Position {
-    size_t stringIndex;
-    size_t positionInString;
-};
 
 class Trie {
 private:
+
+public:
+    
     Node* root;
     Node* currNode;
     vector<Node*> indexedNodes;
     int totalEncodedLengthIntBits;
     int size;
-public:
+
     Trie();
+    
     bool Contains(string);
     bool GoToChild(char);
     bool GoToParent();
@@ -48,7 +48,7 @@ public:
     void Remove(char);
     bool HasChild(char);
     void AddPatternPositionToChild(char, Position);
-    void PruneInfrequentChildren();
+    void PruneInfrequentChildren(int minSupport);
 };
 
 #endif /* Trie_hpp */

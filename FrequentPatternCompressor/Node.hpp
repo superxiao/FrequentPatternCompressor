@@ -15,6 +15,11 @@
 
 using namespace std;
 
+struct Position {
+    size_t stringIndex;
+    size_t positionInString;
+};
+
 struct Node {
     Node* children[256];
     Node* parent;
