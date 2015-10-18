@@ -23,7 +23,7 @@ struct Node {
     int code;
     int codeLen;
     string string;
-    vector<int> patternPositions;
+    vector<Position> patternPositions;
 };
 
 #endif /* Node_hpp */

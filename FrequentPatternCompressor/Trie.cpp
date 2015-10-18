@@ -126,8 +126,8 @@ bool Trie::HasChild(char c){
     return currNode->children[c] != NULL;
 }
 
-void Trie::AddPatternPositionToChild(){
-    // TODO Not implemented
+void Trie::AddPatternPositionToChild(char c, Position position){
+    currNode->children[c]->patternPositions.push_back(position);
 }
 
 void Trie::PruneInfrequentChildren(){

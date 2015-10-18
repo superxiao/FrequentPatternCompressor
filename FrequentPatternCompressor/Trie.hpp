@@ -13,6 +13,11 @@
 #include <vector>
 #include "Node.hpp"
 
+struct Position {
+    size_t stringIndex;
+    size_t positionInString;
+};
+
 class Trie {
 private:
     Node* root;
@@ -42,7 +47,7 @@ public:
     int MySize();
     void Remove(char);
     bool HasChild(char);
-    void AddPatternPositionToChild();
+    void AddPatternPositionToChild(char, Position);
     void PruneInfrequentChildren();
 };
 
