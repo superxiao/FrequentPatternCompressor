@@ -33,6 +33,11 @@ bool Trie::GoToChild(char c){
     }
     return false;
 }
+
+void Trie::GoToChildOfRoot(char c) {
+    currNode = root->children[c];
+}
+
 bool Trie::GoToParent(){
     if(currNode->parent != NULL) {
         currNode = currNode->parent;

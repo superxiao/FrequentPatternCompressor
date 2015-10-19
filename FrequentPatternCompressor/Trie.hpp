@@ -29,6 +29,7 @@ public:
     
     bool Contains(string);
     bool GoToChild(char);
+    void GoToChildOfRoot(char);
     bool GoToParent();
     bool GoToSibling(char);
     void GoToRoot();
