@@ -19,16 +19,16 @@ using namespace std;
 class PrefixSpan {
     
 public:
-    static Trie* GetFrequentPatterns(vector<string>& strings, int minSupport);
+    static Trie* GetFrequentPatterns(const vector<string>& strings, int minSupport);
     
 private:
-    static Trie* BuildTreeWithCharFrequencies(vector<string>& strings, int minSupport);
-    static void PutCharPosition(Trie* tree, int stringIdx,
-                                int charIdxInString, string string);
+    static Trie* BuildTreeWithCharFrequencies(const vector<string>& strings, int minSupport);
+    static void PutCharPosition(Trie* tree, size_t stringIdx,
+                                size_t charIdxInString, const string& string);
     static bool PutPositionsOfExpanded(Trie* tree, int prefixLen,
-                                       Position prefixPos, string string);
+                                       Position prefixPos, const string& string);
     static void DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
-                                                    vector<Position>& prefixPositions, vector<string>& strings, int minSupport);
+                                                    const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
 };
 
 #endif /* PrefixSpan_hpp */

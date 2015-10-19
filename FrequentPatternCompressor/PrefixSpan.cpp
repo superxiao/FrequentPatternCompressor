@@ -9,11 +9,11 @@
 #include "PrefixSpan.hpp"
 
 
-Trie* PrefixSpan::BuildTreeWithCharFrequencies(vector<string>& strings, int minSupport) {
+Trie* PrefixSpan::BuildTreeWithCharFrequencies(const vector<string>& strings, int minSupport) {
     Trie* tree = new Trie();
-    for (int stringIdx = 0; stringIdx < strings.size(); stringIdx++) {
-        string string = strings[stringIdx];
-        for (int charIdx = 0; charIdx < string.length(); charIdx++) {
+    for (size_t stringIdx = 0; stringIdx < strings.size(); stringIdx++) {
+        const string& string = strings[stringIdx];
+        for (size_t charIdx = 0; charIdx < string.length(); charIdx++) {
             PutCharPosition(tree, stringIdx, charIdx, string);
         }
     }
@@ -21,14 +21,14 @@ Trie* PrefixSpan::BuildTreeWithCharFrequencies(vector<string>& strings, int minS
     return tree;
 }
 
-void PrefixSpan::PutCharPosition(Trie* tree, int stringIdx,
-                                 int charIdxInString, string string) {
-    PutPositionsOfExpanded(tree, 0, Position{static_cast<size_t>(stringIdx), static_cast<size_t>(charIdxInString)},
+void PrefixSpan::PutCharPosition(Trie* tree, size_t stringIdx,
+                                 size_t charIdxInString, const string& string) {
+    PutPositionsOfExpanded(tree, 0, Position{stringIdx, charIdxInString},
                            string);
 }
 
 bool PrefixSpan::PutPositionsOfExpanded(Trie* tree, int prefixLen,
-                                        Position prefixPos, string string) {
+                                        Position prefixPos, const string& string) {
     size_t nextCharPos = prefixPos.positionInString + prefixLen;
     if (nextCharPos < string.length()) {
         char c = string[nextCharPos];
@@ -42,26 +42,25 @@ bool PrefixSpan::PutPositionsOfExpanded(Trie* tree, int prefixLen,
 }
 
 void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
-                                                     vector<Position>& prefixPositions, vector<string>& strings, int minSupport) {
+                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
-        string string = strings[prefixPos.stringIndex];
+        const string& string = strings[prefixPos.stringIndex];
         PutPositionsOfExpanded(tree, prefixLen, prefixPos, string);
     }
     tree->PruneInfrequentChildren(minSupport);
-    Node** children = tree->currNode->children; // TODO should be list?
+    auto& children = tree->currNode->frequentChildren;
     Node* currNode = tree->currNode;
-    for (size_t i = 0; i < 256; i++) {
-        Node* node = children[i];
-        tree->currNode = node;
+    for (auto itr = children.begin(); itr != children.end(); itr++) {
+        tree->currNode = *itr;
         DepthFirstSearchForFrequentPatterns(tree, prefixLen + 1,
                                             tree->currNode->patternPositions, strings, minSupport);
         tree->currNode = currNode;
     }
 }
 
-Trie* PrefixSpan::GetFrequentPatterns(vector<string>& strings, int minSupport) {
+Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupport) {
     Trie* tree = BuildTreeWithCharFrequencies(strings, minSupport);
     // bug
     tree->indexedNodes = vector<Node*>();

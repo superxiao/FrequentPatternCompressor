@@ -106,7 +106,7 @@ void Trie::AddChildNode(char c){
     size++;
     Node* newChild = new Node();
     currNode->children[c] = newChild;
-    //currNode->childList.add(newChild);
+    currNode->frequentChildren.push_front(newChild);
     newChild->string = currNode->string + c;
     newChild->parent = currNode;
 }
@@ -130,5 +130,13 @@ void Trie::AddPatternPositionToChild(char c, Position position){
 }
 
 void Trie::PruneInfrequentChildren(int minSupport){
-    // TODO Not implemented
+    for(auto itr = currNode->frequentChildren.begin(); itr != currNode->frequentChildren.end();) {
+        Node* node = *itr;
+        if (node->patternPositions.size() < minSupport) {
+            this->Remove(node->string.back());
+            itr = currNode->frequentChildren.erase(itr);
+            continue;
+        }
+        itr++;
+    }
 }

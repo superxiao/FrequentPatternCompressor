@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <list>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ struct Position {
 
 struct Node {
     Node* children[256];
+    list<Node*> frequentChildren;
     Node* parent;
     int index = -1;
     int usage = 0;
