@@ -23,7 +23,7 @@ Trie* PrefixSpan::BuildTreeWithCharFrequencies(const vector<string>& strings, in
 
 void PrefixSpan::PutCharPosition(Trie* tree, size_t stringIdx,
                                  size_t charIdxInString, const string& string) {
-    PutPositionsOfExpanded(tree, 0, Position{stringIdx, charIdxInString},
+    PutPositionsOfExpanded(tree, 0, move(Position{stringIdx, charIdxInString}),
                            string);
 }
 

@@ -112,7 +112,7 @@ void Trie::AddChildNode(char c){
     size++;
     Node* newChild = new Node();
     currNode->children[c] = newChild;
-    currNode->frequentChildren.push_front(newChild);
+    currNode->frequentChildren.push_back(newChild);
     newChild->string = currNode->string + c;
     newChild->parent = currNode;
 }
@@ -131,8 +131,9 @@ bool Trie::HasChild(char c){
     return currNode->children[c] != NULL;
 }
 
-void Trie::AddPatternPositionToChild(char c, Position position){
-    currNode->children[c]->patternPositions.push_back(position);
+void Trie::AddPatternPositionToChild(char c, const Position& position){
+    Node* child = currNode->children[c];
+    child->patternPositions.push_back(position);
 }
 
 void Trie::PruneInfrequentChildren(int minSupport){
@@ -146,3 +147,20 @@ void Trie::PruneInfrequentChildren(int minSupport){
         itr++;
     }
 }
+
+void Trie::BuildTrie(const vector<string> &strings) {
+    Node* currNode;
+    for (auto& child : root->children) {
+        child = new Node();
+    }
+    for (const string& string : strings) {
+        currNode = root;
+        for (char c : string) {
+            if (!currNode->children[c]) {
+                currNode->children[c] = new Node();
+            }
+            currNode = currNode->children[c];
+        }
+    }
+}
+    

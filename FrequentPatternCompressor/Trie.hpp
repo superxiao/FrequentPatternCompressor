@@ -48,8 +48,9 @@ public:
     int MySize();
     void Remove(char);
     bool HasChild(char);
-    void AddPatternPositionToChild(char, Position);
+    void AddPatternPositionToChild(char, const Position&);
     void PruneInfrequentChildren(int minSupport);
+    void BuildTrie(const vector<string>& strings);
 };
 
 #endif /* Trie_hpp */

@@ -22,7 +22,7 @@ struct Position {
 };
 
 struct Node {
-    Node* children[256];
+    Node* children[256] {NULL}; // Optimization using pointer?
     list<Node*> frequentChildren;
     Node* parent;
     int index = -1;

@@ -12,7 +12,7 @@
 #include "PrefixSpan.hpp"
 
 TEST_CASE( "PrefixSpan should be able to find just the frequent"
-          " patterns in input as specified by minSupp", "[PrefixSpan]" ) {
+          " patterns in input, and nothing more", "[PrefixSpan]" ) {
     PrefixSpan prefixSpan;
     vector<string> strings;
     strings.push_back("1234");
