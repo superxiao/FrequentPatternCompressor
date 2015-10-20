@@ -9,7 +9,8 @@
 #include "Trie.hpp"
 
 Trie::Trie(){
-    
+    this->root = new Node;
+    this->currNode = this->root;
 }
 
 bool Trie::Contains(string str){

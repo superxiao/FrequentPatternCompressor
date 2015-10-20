@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80469A31BD33474006AD5D9 /* PrefixSpan.cpp */; settings = {ASSET_TAGS = (); }; };
 		D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80788BF1BD5677800638410 /* FrequentPatternCompressor.cpp */; settings = {ASSET_TAGS = (); }; };
+		D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */; settings = {ASSET_TAGS = (); }; };
+		D80CFEE41BD6DBD800121CA8 /* TestTrie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */; settings = {ASSET_TAGS = (); }; };
+		D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -32,6 +35,9 @@
 		D80788BF1BD5677800638410 /* FrequentPatternCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequentPatternCompressor.cpp; sourceTree = "<group>"; };
 		D80788C01BD5677800638410 /* FrequentPatternCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternCompressor.hpp; sourceTree = "<group>"; };
 		D80CFEDF1BD6D87600121CA8 /* Catch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Catch.hpp; sourceTree = "<group>"; };
+		D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestFrequentPatternCompressor.cpp; sourceTree = "<group>"; };
+		D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestTrie.cpp; sourceTree = "<group>"; };
+		D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestPrefixSpan.cpp; sourceTree = "<group>"; };
 		D82DB6221BD18DA400249E13 /* FrequentPatternCompressor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrequentPatternCompressor; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82DB6251BD18DA400249E13 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D82DB62C1BD1956200249E13 /* Trie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trie.cpp; sourceTree = "<group>"; };
@@ -80,6 +86,9 @@
 				D82DB62F1BD1961E00249E13 /* Node.cpp */,
 				D82DB6301BD1961E00249E13 /* Node.hpp */,
 				D80CFEDF1BD6D87600121CA8 /* Catch.hpp */,
+				D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */,
+				D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */,
+				D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -141,10 +150,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */,
+				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
+				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
 				D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */,
+				D80CFEE41BD6DBD800121CA8 /* TestTrie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
