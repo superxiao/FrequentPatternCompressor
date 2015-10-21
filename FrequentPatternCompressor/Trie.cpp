@@ -9,7 +9,7 @@
 #include "Trie.hpp"
 
 Trie::Trie(){
-    this->root = new Node;
+    this->root = new Node();
     this->currNode = this->root;
 }
 
@@ -24,19 +24,6 @@ bool Trie::Contains(string str){
         }
     }
     return true;
-}
-
-bool Trie::GoToChild(char c){
-    Node* child = currNode->children[c];
-    if (child != NULL) {
-        currNode = child;
-        return true;
-    }
-    return false;
-}
-
-void Trie::GoToChildOfRoot(char c) {
-    currNode = root->children[c];
 }
 
 bool Trie::GoToParent(){
@@ -55,25 +42,9 @@ bool Trie::GoToSibling(char sibling){
     return false;
 }
 
-void Trie::GoToRoot(){
-    currNode = root;
-}
-
-void Trie::IncrementUsage(){
-    currNode->usage++;
-}
-
-int Trie::GetUsage(){
-    return currNode->usage;
-}
-
 void Trie::SetIndex(int index){
     currNode->index = index;
     indexedNodes[index] = currNode;
-}
-
-int Trie:: GetIndex(){
-    return currNode->index;
 }
 
 void Trie::SetUsageByIndex(int index, int usage){

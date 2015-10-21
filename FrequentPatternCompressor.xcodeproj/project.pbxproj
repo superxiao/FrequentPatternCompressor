@@ -12,6 +12,7 @@
 		D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */; settings = {ASSET_TAGS = (); }; };
 		D80CFEE41BD6DBD800121CA8 /* TestTrie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */; settings = {ASSET_TAGS = (); }; };
+		D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE81BD70DD700121CA8 /* Utils.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -38,6 +39,8 @@
 		D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestFrequentPatternCompressor.cpp; sourceTree = "<group>"; };
 		D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestTrie.cpp; sourceTree = "<group>"; };
 		D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestPrefixSpan.cpp; sourceTree = "<group>"; };
+		D80CFEE81BD70DD700121CA8 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		D80CFEE91BD70DD700121CA8 /* Utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
 		D82DB6221BD18DA400249E13 /* FrequentPatternCompressor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrequentPatternCompressor; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82DB6251BD18DA400249E13 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D82DB62C1BD1956200249E13 /* Trie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trie.cpp; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 				D80CFEE01BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp */,
 				D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */,
 				D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */,
+				D80CFEE81BD70DD700121CA8 /* Utils.cpp */,
+				D80CFEE91BD70DD700121CA8 /* Utils.hpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -153,6 +158,7 @@
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
+				D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
 				D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */,
@@ -243,6 +249,7 @@
 		D82DB62A1BD18DA400249E13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -250,6 +257,8 @@
 		D82DB62B1BD18DA400249E13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 3;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

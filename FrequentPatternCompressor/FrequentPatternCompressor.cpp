@@ -13,36 +13,44 @@
 #include "PrefixSpan.hpp"
 
 vector<int> FrequentPatternCompressor::indices;
+string FrequentPatternCompressor::out;
 
-string FrequentPatternCompressor::Compress(vector<string> strings) {
+string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     indices.clear();
+    indices.reserve(strings.size());
     int sample_size = 100;
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
-    for (size_t i; i < strings.size(); i++) {
+    //int size = 0;
+    //for (const string& s : strings) {
+    //    size += s.length();
+    //}
+    for (size_t i; i < sample_size; i++) {
         sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
     }
     
-    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 5);
+    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 2);
     
     patterns.reserve(strings.size() + 256);
     
-    for (auto itr = strings.begin(); itr != strings.end(); itr++) {
-        charNum += strings.size();
-        ForwardCover(*itr, trie);
+    for (const string& s : strings) {
+        ForwardCover(s, trie);
     }
-    
-    string out;
+    //if (size > out.capacity()) {
+    //    out.reserve(size);
+    //}
+    out.clear();
     for(auto &pattern : patterns) {
         uint16_t length = pattern.length();
         out.append(reinterpret_cast<char*>(&length), 2);
         out.append(pattern);
     }
+    //indices.reserve(charNum);
     out.append(2, 0);
     
     AppendPackedLengths(strings, out);
     
-    int bitsPerIndex = sizeof(unsigned) - __clz((unsigned)patterns.size());
+    int bitsPerIndex = sizeof(unsigned) * 8 - __clz((unsigned)patterns.size());
     out.append(reinterpret_cast<char*>(&bitsPerIndex), 2);
     AppendPackedIntegers(this->indices, out, bitsPerIndex);
     
@@ -50,7 +58,7 @@ string FrequentPatternCompressor::Compress(vector<string> strings) {
     
 }
 
-void FrequentPatternCompressor::AppendPackedLengths(const vector<string> strings, string& out) {
+void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& strings, string& out) {
     vector<int> lengths;
     lengths.reserve(strings.size());
     int minLen = (int)strings[0].size();
@@ -66,7 +74,8 @@ void FrequentPatternCompressor::AppendPackedLengths(const vector<string> strings
     int size = (int)strings.size();
     out.append(reinterpret_cast<char*>(&size), 4);
     out.append(reinterpret_cast<char*>(&minLen), 2);
-    int bitsPerLen = sizeof(unsigned) - __clz((unsigned)maxLen);
+    int leading0s = __clz((unsigned)maxLen);
+    int bitsPerLen = sizeof(unsigned) * 8 - leading0s; // TODO clz doesn't support 0?
     out.append(reinterpret_cast<char*>(&bitsPerLen), 2);
     AppendPackedIntegers(lengths, out, bitsPerLen);
 }
@@ -82,23 +91,14 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     UseCurrentPattern(trie);
 }
 
-void FrequentPatternCompressor::UseCurrentPattern(Trie* trie){
-    if (!trie->GetUsage()) {
-        trie->SetIndex((int)patterns.size());
-        patterns.push_back(trie->GetString());
-    }
-    trie->IncrementUsage();
-    indices.push_back(trie->GetIndex());
-}
-
-void FrequentPatternCompressor::AppendPackedIntegers(const vector<int> integers, string& out, int bitsPerInt){
+void FrequentPatternCompressor::AppendPackedIntegers(const vector<int>& integers, string& out, int bitsPerInt){
     // resize first using outSize to optmize?
     // int outSize = (indices.size() * bitsPerIndex + 7) / 8;
     unsigned acc = 0;
-    unsigned bits = 0;
+    int bits = 0;
     for (int i : integers) {
         for (; bits > 7; bits -= 8) {
-            out.push_back((char)acc);
+            out.push_back(acc);
             acc >>= 8;
         }
         acc |= i << bits;

@@ -28,15 +28,28 @@ public:
     Trie();
     
     bool Contains(string);
-    bool GoToChild(char);
-    void GoToChildOfRoot(char);
+    inline bool GoToChild(char c) {
+        return currNode->children[c]?currNode = currNode->children[c], true: false;
+    }
+    
+    inline void GoToChildOfRoot(char c) {
+        currNode = root->children[c];
+    }
     bool GoToParent();
     bool GoToSibling(char);
-    void GoToRoot();
-    void IncrementUsage();
-    int GetUsage();
+    inline void GoToRoot() {
+        currNode = root;
+    }
+    inline void IncrementUsage() {
+        currNode->usage++;
+    }
+    inline int GetUsage() {
+        return currNode->usage;
+    }
     void SetIndex(int);
-    int GetIndex();
+    inline int GetIndex() {
+        return currNode->index;
+    }
     void SetUsageByIndex(int index, int usage);
     int GetUsageByIndex(int index);
     int GetCodeByIndex(int index);
