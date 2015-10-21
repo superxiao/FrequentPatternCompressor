@@ -50,4 +50,5 @@ TEST_CASE( "Trie should support adding strings, and testing the presence"
         }
         REQUIRE_FALSE(contains);
     }
+    delete trie;
 }

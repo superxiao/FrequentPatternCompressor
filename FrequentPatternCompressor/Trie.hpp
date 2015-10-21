@@ -13,7 +13,6 @@
 #include <vector>
 #include "Node.hpp"
 
-
 class Trie {
 private:
 
@@ -26,6 +25,7 @@ public:
     int size;
 
     Trie();
+    ~Trie();
     
     bool Contains(string);
     inline bool GoToChild(char c) {

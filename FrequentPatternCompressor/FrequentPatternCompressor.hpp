@@ -15,9 +15,8 @@
 class FrequentPatternCompressor {
 private:
     static vector<int> indices;
-    //static char* out;
-    //static int outEnd;
-    static string out;
+    static char* out;
+    static int outEnd;
     int maxIndex = 0;
     vector<string> patterns;
     
@@ -34,8 +33,8 @@ private:
 
     }
     
-    void AppendPackedLengths(const vector<string>& strings, string& out);
-    void AppendPackedIntegers(const vector<int>& integers, string& out, int bitsPerInt);
+    void AppendPackedLengths(const vector<string>& strings);
+    void AppendPackedIntegers(const vector<int>& integers, int bitsPerInt);
 
 public:
     int charNum;

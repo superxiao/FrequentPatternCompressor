@@ -13,7 +13,8 @@
 #include "PrefixSpan.hpp"
 
 vector<int> FrequentPatternCompressor::indices;
-string FrequentPatternCompressor::out;
+char* FrequentPatternCompressor::out = new char[10 * 1024 * 1024];
+int FrequentPatternCompressor::outEnd = 0;
 
 string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     indices.clear();
@@ -25,11 +26,12 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     //for (const string& s : strings) {
     //    size += s.length();
     //}
-    for (size_t i; i < sample_size; i++) {
-        sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
+    for (size_t i = 0; i < sample_size; i++) {
+        //sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
+        sample[i] = strings[i];
     }
     
-    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 2);
+    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 5);
     
     patterns.reserve(strings.size() + 256);
     
@@ -39,26 +41,31 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     //if (size > out.capacity()) {
     //    out.reserve(size);
     //}
-    out.clear();
+    outEnd = 0;
     for(auto &pattern : patterns) {
         uint16_t length = pattern.length();
-        out.append(reinterpret_cast<char*>(&length), 2);
-        out.append(pattern);
+        memcpy(out + outEnd, reinterpret_cast<char*>(&length), 2);
+        outEnd += 2;
+        memcpy(out + outEnd, pattern.c_str(), pattern.length());
+        outEnd += pattern.length();
     }
     //indices.reserve(charNum);
-    out.append(2, 0);
+    out[outEnd++] = 0;
+    out[outEnd++] = 0;
     
-    AppendPackedLengths(strings, out);
+    AppendPackedLengths(strings);
     
     int bitsPerIndex = sizeof(unsigned) * 8 - __clz((unsigned)patterns.size());
-    out.append(reinterpret_cast<char*>(&bitsPerIndex), 2);
-    AppendPackedIntegers(this->indices, out, bitsPerIndex);
-    
-    return out;
+    memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerIndex), 2);
+    outEnd += 2;
+    AppendPackedIntegers(this->indices, bitsPerIndex);
+    string result(out, outEnd);
+    delete trie;
+    return result;
     
 }
 
-void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& strings, string& out) {
+void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& strings) {
     vector<int> lengths;
     lengths.reserve(strings.size());
     int minLen = (int)strings[0].size();
@@ -72,41 +79,55 @@ void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& string
         i -= minLen;
     }
     int size = (int)strings.size();
-    out.append(reinterpret_cast<char*>(&size), 4);
-    out.append(reinterpret_cast<char*>(&minLen), 2);
-    int leading0s = __clz((unsigned)maxLen);
+    memcpy(out + outEnd, reinterpret_cast<char*>(&size), 4);
+    outEnd += 4;
+    memcpy(out + outEnd, reinterpret_cast<char*>(&minLen), 2);
+    outEnd += 2;
+    int leading0s = __clz((unsigned)(maxLen - minLen));
     int bitsPerLen = sizeof(unsigned) * 8 - leading0s; // TODO clz doesn't support 0?
-    out.append(reinterpret_cast<char*>(&bitsPerLen), 2);
-    AppendPackedIntegers(lengths, out, bitsPerLen);
+    memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerLen), 2);
+    outEnd += 2;
+    AppendPackedIntegers(lengths, bitsPerLen);
 }
 
 void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     trie->GoToRoot();
+    Node*& currNode = trie->currNode;
+    Node* root = trie->root;
     for(char c : string) {
-        if(!trie->GoToChild(c)) {
+        Node* child = currNode->children[c];
+        if(!child) {
             UseCurrentPattern(trie);
-            trie->GoToChildOfRoot(c);
+            currNode = root->children[c];
+        }
+        else {
+            currNode = child;
         }
     }
     UseCurrentPattern(trie);
 }
 
-void FrequentPatternCompressor::AppendPackedIntegers(const vector<int>& integers, string& out, int bitsPerInt){
+void FrequentPatternCompressor::AppendPackedIntegers(const vector<int>& integers, int bitsPerInt){
     // resize first using outSize to optmize?
     // int outSize = (indices.size() * bitsPerIndex + 7) / 8;
-    unsigned acc = 0;
+    unsigned long acc = 0;
     int bits = 0;
-    for (int i : integers) {
-        for (; bits > 7; bits -= 8) {
-            out.push_back(acc);
-            acc >>= 8;
+    int i = 0;
+    while (i < integers.size()) {
+        if (bits) {
+            *reinterpret_cast<uint32_t*>(out + outEnd) = (uint32_t)acc;
+            outEnd += 4;
+            bits -= 32;
+            acc >>= 32;
         }
-        acc |= i << bits;
-        bits += bitsPerInt;
+        while (bits < 32 && i < integers.size()) {
+            acc |= integers[i++] << bits;
+            bits += bitsPerInt;
+        }
     }
     
     for (; bits > 0; bits -= 8) {
-        out.push_back((char)acc);
+        out[outEnd++] = (char)acc;
         acc >>= 8;
     }
 }

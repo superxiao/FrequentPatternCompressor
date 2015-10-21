@@ -7,3 +7,9 @@
 //
 
 #include "Node.hpp"
+
+Node::~Node() {
+    for(Node* node : children) { // Delete from frequent list?
+        delete node;
+    }
+}

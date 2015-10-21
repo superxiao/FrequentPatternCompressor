@@ -13,6 +13,12 @@ Trie::Trie(){
     this->currNode = this->root;
 }
 
+Trie::~Trie(){
+    delete root;
+    root = NULL;
+    currNode = NULL;
+}
+
 bool Trie::Contains(string str){
     Node* currNode = root;
     for (int i = 0; i < str.size(); i++) {

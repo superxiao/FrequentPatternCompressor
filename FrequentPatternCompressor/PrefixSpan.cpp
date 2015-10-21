@@ -64,7 +64,7 @@ Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupp
     Trie* tree = BuildTreeWithCharFrequencies(strings, minSupport);
     // bug
     tree->indexedNodes = vector<Node*>();
-    tree->indexedNodes.resize(10000);
+    tree->indexedNodes.resize(10000); // TODO
     Node** children = tree->currNode->children;
     for (int i = 0; i < 256; i++) {
         if (children[i] == NULL) {

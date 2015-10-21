@@ -22,6 +22,9 @@ struct Position {
 };
 
 struct Node {
+    
+    ~Node();
+    
     Node* children[256] {NULL}; // Optimization using pointer?
     list<Node*> frequentChildren;
     Node* parent;
