@@ -22,46 +22,40 @@ public:
     Node* currNode;
     vector<Node*> indexedNodes;
     int totalEncodedLengthIntBits;
-    int size;
+    int size = 0;
 
     Trie();
     ~Trie();
     
     bool Contains(string);
-    inline bool GoToChild(char c) {
+    inline bool GoToChild(uint8_t c) {
         return currNode->children[c]?currNode = currNode->children[c], true: false;
     }
     
-    inline void GoToChildOfRoot(char c) {
+    inline void GoToChildOfRoot(uint8_t c) {
         currNode = root->children[c];
     }
     bool GoToParent();
-    bool GoToSibling(char);
+    bool GoToSibling(uint8_t);
     inline void GoToRoot() {
         currNode = root;
     }
-    inline void IncrementUsage() {
-        currNode->usage++;
+    inline void SetIndex(int index) {
+        currNode->index = index;
+        indexedNodes[index] = currNode;
     }
-    inline int GetUsage() {
-        return currNode->usage;
-    }
-    void SetIndex(int);
     inline int GetIndex() {
         return currNode->index;
     }
-    void SetUsageByIndex(int index, int usage);
-    int GetUsageByIndex(int index);
-    int GetCodeByIndex(int index);
-    int GetCodeLenByIndex(int index);
-    void ClearUsage();
     int GetTotalEncodedLengthInBits();
-    string GetString();
-    void AddChildNode(char c);
+    inline string GetString() {
+        return currNode->str;
+    }
+    void AddChildNode(uint8_t c);
     int MySize();
-    void Remove(char);
-    bool HasChild(char);
-    void AddPatternPositionToChild(char, const Position&);
+    void Remove(uint8_t);
+    bool HasChild(uint8_t);
+    void AddPatternPositionToChild(uint8_t, const Position&);
     void PruneInfrequentChildren(int minSupport);
     void BuildTrie(const vector<string>& strings);
 };

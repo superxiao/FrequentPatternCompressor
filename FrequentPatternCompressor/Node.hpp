@@ -27,12 +27,8 @@ struct Node {
     
     Node* children[256] {NULL}; // Optimization using pointer?
     list<Node*> frequentChildren;
-    Node* parent;
     int index = -1;
-    int usage = 0;
-    int code;
-    int codeLen;
-    string string;
+    string str;
     vector<Position> patternPositions;
 };
 

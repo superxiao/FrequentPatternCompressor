@@ -46,8 +46,8 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
-        const string& string = strings[prefixPos.stringIndex];
-        PutPositionsOfExpanded(tree, prefixLen, prefixPos, string);
+        const string& str = strings[prefixPos.stringIndex];
+        PutPositionsOfExpanded(tree, prefixLen, prefixPos, str);
     }
     tree->PruneInfrequentChildren(minSupport);
     auto& children = tree->currNode->frequentChildren;
@@ -69,7 +69,7 @@ Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupp
     for (int i = 0; i < 256; i++) {
         if (children[i] == NULL) {
             children[i] = new Node();
-            children[i]->string = (char) i;
+            children[i]->str = (char) i;
             continue;
         }
         Node* currNode = tree->currNode;

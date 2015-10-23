@@ -7,6 +7,8 @@
 //
 
 #include "Trie.hpp"
+#include <cassert>
+#include <iostream>
 
 Trie::Trie(){
     this->root = new Node();
@@ -22,7 +24,7 @@ Trie::~Trie(){
 bool Trie::Contains(string str){
     Node* currNode = root;
     for (int i = 0; i < str.size(); i++) {
-        char c = str[i];
+        uint8_t c = str[i];
         if (currNode->children[c] == NULL) {
             return false;
         } else {
@@ -32,83 +34,33 @@ bool Trie::Contains(string str){
     return true;
 }
 
-bool Trie::GoToParent(){
-    if(currNode->parent != NULL) {
-        currNode = currNode->parent;
-        return true;
-    }
-    return false;
-}
-
-bool Trie::GoToSibling(char sibling){
-    if(currNode->parent != NULL && currNode->parent->children[sibling] != NULL) {
-        currNode = currNode->parent->children[sibling];
-        return true;
-    }
-    return false;
-}
-
-void Trie::SetIndex(int index){
-    currNode->index = index;
-    indexedNodes[index] = currNode;
-}
-
-void Trie::SetUsageByIndex(int index, int usage){
-    indexedNodes[index]->usage = usage;
-}
-
-int Trie::GetUsageByIndex(int index){
-    return indexedNodes[index]->usage;
-}
-
-int Trie::GetCodeByIndex(int index){
-    return indexedNodes[index]->code;
-}
-
-int Trie::GetCodeLenByIndex(int index){
-    return indexedNodes[index]->codeLen;
-}
-
-void Trie::ClearUsage(){
-    for (int i = 0; i < indexedNodes.size(); i++) {
-        if (indexedNodes[i] == NULL)
-            break;
-        indexedNodes[i]->usage = 0;
-    }
-}
-
 int Trie::GetTotalEncodedLengthInBits(){
     return totalEncodedLengthIntBits;
 }
 
-string Trie::GetString(){
-    return currNode->string;
-}
-
-void Trie::AddChildNode(char c){
+void Trie::AddChildNode(uint8_t c){
     size++;
     Node* newChild = new Node();
     currNode->children[c] = newChild;
     currNode->frequentChildren.push_back(newChild);
-    newChild->string = currNode->string + c;
-    newChild->parent = currNode;
+    newChild->str = currNode->str + (char)c;
 }
 
 int Trie::MySize(){
     return size;
 }
 
-void Trie::Remove(char c){
+void Trie::Remove(uint8_t c){
     size--;
     delete currNode->children[c];
     currNode->children[c] = NULL;
 }
 
-bool Trie::HasChild(char c){
+bool Trie::HasChild(uint8_t c){
     return currNode->children[c] != NULL;
 }
 
-void Trie::AddPatternPositionToChild(char c, const Position& position){
+void Trie::AddPatternPositionToChild(uint8_t c, const Position& position){
     Node* child = currNode->children[c];
     child->patternPositions.push_back(position);
 }
@@ -117,7 +69,7 @@ void Trie::PruneInfrequentChildren(int minSupport){
     for(auto itr = currNode->frequentChildren.begin(); itr != currNode->frequentChildren.end();) {
         Node* node = *itr;
         if (node->patternPositions.size() < minSupport) {
-            this->Remove(node->string.back());
+            this->Remove(node->str.back());
             itr = currNode->frequentChildren.erase(itr);
             continue;
         }
@@ -130,9 +82,9 @@ void Trie::BuildTrie(const vector<string> &strings) {
     for (auto& child : root->children) {
         child = new Node();
     }
-    for (const string& string : strings) {
+    for (const string& str : strings) {
         currNode = root;
-        for (char c : string) {
+        for (char c : str) {
             if (!currNode->children[c]) {
                 currNode->children[c] = new Node();
             }

@@ -11,6 +11,7 @@
 #include <sstream>
 #include <ctime>
 #include <iomanip>
+#include <cstring>
 
 vector<string> random_dates(int n) {
     vector<string> strings;

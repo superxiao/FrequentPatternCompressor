@@ -14,27 +14,16 @@
 
 class FrequentPatternCompressor {
 private:
-    static vector<int> indices;
-    static char* out;
-    static int outEnd;
     int maxIndex = 0;
     vector<string> patterns;
     
     // Does inining make a difference?
     inline void ForwardCover(const string& string, Trie* trie);
     
-    inline void UseCurrentPattern(Trie* trie) {
-        if (!trie->GetUsage()) {
-            trie->SetIndex((int)patterns.size());
-            patterns.push_back(trie->GetString());
-        }
-        trie->IncrementUsage();
-        indices.push_back(trie->GetIndex());
-
-    }
+    inline void UseCurrentPattern(Trie* trie);
     
     void AppendPackedLengths(const vector<string>& strings);
-    void AppendPackedIntegers(const vector<int>& integers, int bitsPerInt);
+    void AppendPackedIntegers(int* integers, int size, int bitsPerInt);
 
 public:
     int charNum;

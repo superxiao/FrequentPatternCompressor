@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "A5A70726B2605EF55A40EBF6BAF732866B5AD71A",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "74DBEB931AFCAFC0E74DD91D13D20BBE2F9EA068" : 0,
+    "A5A70726B2605EF55A40EBF6BAF732866B5AD71A" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "53931005-74B1-45EF-9771-841D3D9B6892",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "74DBEB931AFCAFC0E74DD91D13D20BBE2F9EA068" : "snappy\/",
+    "A5A70726B2605EF55A40EBF6BAF732866B5AD71A" : "FrequentPatternCompressor\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "FrequentPatternCompressor",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "FrequentPatternCompressor.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/google\/snappy.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "74DBEB931AFCAFC0E74DD91D13D20BBE2F9EA068"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "bitbucket.org:superxiao\/frequentpatterncompressor.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "A5A70726B2605EF55A40EBF6BAF732866B5AD71A"
+    }
+  ]
+}

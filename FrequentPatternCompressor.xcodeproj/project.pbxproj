@@ -16,6 +16,8 @@
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
+		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; settings = {ASSET_TAGS = (); }; };
+		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +49,11 @@
 		D82DB62D1BD1956200249E13 /* Trie.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Trie.hpp; sourceTree = "<group>"; };
 		D82DB62F1BD1961E00249E13 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
 		D82DB6301BD1961E00249E13 /* Node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
+		D85FC2E91BD8415F0058CD6D /* snappy */ = {isa = PBXFileReference; lastKnownFileType = folder; path = snappy; sourceTree = "<group>"; };
+		D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnappyCompressor.cpp; sourceTree = "<group>"; };
+		D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SnappyCompressor.hpp; sourceTree = "<group>"; };
+		D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrequentPatternCompressor; sourceTree = "<group>"; };
+		D8DD8EAC1BD866B50059803D /* libsnappy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsnappy.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +71,8 @@
 		D82DB6191BD18DA400249E13 = {
 			isa = PBXGroup;
 			children = (
+				D8DD8EAC1BD866B50059803D /* libsnappy.a */,
+				D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */,
 				D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */,
 				D82DB6231BD18DA400249E13 /* Products */,
 			);
@@ -79,6 +89,7 @@
 		D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */ = {
 			isa = PBXGroup;
 			children = (
+				D85FC2E91BD8415F0058CD6D /* snappy */,
 				D82DB6251BD18DA400249E13 /* main.cpp */,
 				D82DB62C1BD1956200249E13 /* Trie.cpp */,
 				D82DB62D1BD1956200249E13 /* Trie.hpp */,
@@ -94,6 +105,8 @@
 				D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */,
 				D80CFEE81BD70DD700121CA8 /* Utils.cpp */,
 				D80CFEE91BD70DD700121CA8 /* Utils.hpp */,
+				D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */,
+				D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -157,6 +170,7 @@
 				D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */,
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
+				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
 				D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
@@ -234,6 +248,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -249,7 +264,12 @@
 		D82DB62A1BD18DA400249E13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -258,7 +278,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = s;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

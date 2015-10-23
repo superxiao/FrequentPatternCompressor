@@ -10,15 +10,17 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <cstring>
 #include "PrefixSpan.hpp"
 
-vector<int> FrequentPatternCompressor::indices;
-char* FrequentPatternCompressor::out = new char[10 * 1024 * 1024];
-int FrequentPatternCompressor::outEnd = 0;
+
+char out[10 * 1024 * 1024];
+int indixEnd = 0;
+int indices[5*1024*1024]; // Dynamic or static no difference
+int outEnd = 0;
 
 string FrequentPatternCompressor::Compress(const vector<string>& strings) {
-    indices.clear();
-    indices.reserve(strings.size());
+    indixEnd = 0;
     int sample_size = 100;
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
@@ -27,8 +29,8 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     //    size += s.length();
     //}
     for (size_t i = 0; i < sample_size; i++) {
-        //sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
-        sample[i] = strings[i];
+        sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
+        //sample[i] = strings[i];
     }
     
     Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 5);
@@ -55,10 +57,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     
     AppendPackedLengths(strings);
     
-    int bitsPerIndex = sizeof(unsigned) * 8 - __clz((unsigned)patterns.size());
+    int bitsPerIndex = sizeof(unsigned) * 8 - __builtin_clz((unsigned)patterns.size());
     memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerIndex), 2);
     outEnd += 2;
-    AppendPackedIntegers(this->indices, bitsPerIndex);
+    AppendPackedIntegers(indices, indixEnd, bitsPerIndex);
     string result(out, outEnd);
     delete trie;
     return result;
@@ -83,44 +85,57 @@ void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& string
     outEnd += 4;
     memcpy(out + outEnd, reinterpret_cast<char*>(&minLen), 2);
     outEnd += 2;
-    int leading0s = __clz((unsigned)(maxLen - minLen));
-    int bitsPerLen = sizeof(unsigned) * 8 - leading0s; // TODO clz doesn't support 0?
+    int bitsPerLen = 0;
+    if (maxLen > minLen) {
+        int leading0s = __builtin_clz((unsigned)(maxLen - minLen));
+        bitsPerLen = sizeof(unsigned) * 8 - leading0s; // TODO clz doesn't support 0?
+    }
     memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerLen), 2);
     outEnd += 2;
-    AppendPackedIntegers(lengths, bitsPerLen);
+    AppendPackedIntegers(&lengths[0], (int)lengths.size(), bitsPerLen);
 }
 
+
 void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
-    trie->GoToRoot();
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
-    for(char c : string) {
+    currNode = root;
+    for(uint8_t c : string) {
         Node* child = currNode->children[c];
-        if(!child) {
+        if (child) {
+            currNode = child;
+        } else {
             UseCurrentPattern(trie);
             currNode = root->children[c];
-        }
-        else {
-            currNode = child;
         }
     }
     UseCurrentPattern(trie);
 }
 
-void FrequentPatternCompressor::AppendPackedIntegers(const vector<int>& integers, int bitsPerInt){
+void FrequentPatternCompressor::UseCurrentPattern(Trie* trie) {
+    if (trie->GetIndex() == -1) {
+        trie->SetIndex((int)patterns.size());
+        patterns.push_back(trie->GetString());
+    }
+    //trie->IncrementUsage();
+    indices[indixEnd++] =trie->GetIndex();
+    
+}
+
+void FrequentPatternCompressor::AppendPackedIntegers(int* integers, int size, int bitsPerInt){
     // resize first using outSize to optmize?
     // int outSize = (indices.size() * bitsPerIndex + 7) / 8;
     unsigned long acc = 0;
     int bits = 0;
     int i = 0;
-    while (i < integers.size()) {
+    while (i < size) {
         if (bits) {
-            *reinterpret_cast<uint32_t*>(out + outEnd) = (uint32_t)acc;
+            memcpy(out + outEnd, &acc, 4);
             outEnd += 4;
             bits -= 32;
             acc >>= 32;
         }
-        while (bits < 32 && i < integers.size()) {
+        while (bits < 32 && i < size) {
             acc |= integers[i++] << bits;
             bits += bitsPerInt;
         }
