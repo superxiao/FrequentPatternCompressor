@@ -13,15 +13,14 @@
 #include <cstring>
 #include "PrefixSpan.hpp"
 
-
 char out[10 * 1024 * 1024];
 int indixEnd = 0;
-int indices[5*1024*1024]; // Dynamic or static no difference
+int indices[10*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     indixEnd = 0;
-    int sample_size = 100;
+    int sample_size = min(100, (int)strings.size());
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
     //int size = 0;
