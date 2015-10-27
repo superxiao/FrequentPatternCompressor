@@ -36,13 +36,22 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     
     patterns.reserve(strings.size() + 256);
     
+    // Using 32 bit here will cause later copying to be slower. But that
+    // should be optimized away with load/store.
+    uint64_t uncompressed_size = 0;
+    
     for (const string& s : strings) {
         ForwardCover(s, trie);
+        uncompressed_size += s.length();
     }
     //if (size > out.capacity()) {
     //    out.reserve(size);
     //}
+    
     outEnd = 0;
+    memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
+    outEnd += sizeof(uncompressed_size);
+    
     for(auto &pattern : patterns) {
         uint16_t length = pattern.length();
         memcpy(out + outEnd, reinterpret_cast<char*>(&length), 2);
@@ -55,10 +64,7 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
     out[outEnd++] = 0;
     
     AppendPackedLengths(strings);
-    
     int bitsPerIndex = sizeof(unsigned) * 8 - __builtin_clz((unsigned)patterns.size());
-    memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerIndex), 2);
-    outEnd += 2;
     AppendPackedIntegers(indices, indixEnd, bitsPerIndex);
     string result(out, outEnd);
     delete trie;
@@ -124,7 +130,10 @@ void FrequentPatternCompressor::UseCurrentPattern(Trie* trie) {
 void FrequentPatternCompressor::AppendPackedIntegers(int* integers, int size, int bitsPerInt){
     // resize first using outSize to optmize?
     // int outSize = (indices.size() * bitsPerIndex + 7) / 8;
-    unsigned long acc = 0;
+    if (bitsPerInt == 0) {
+        return;
+    }
+    uint64_t acc = 0;
     int bits = 0;
     int i = 0;
     while (i < size) {
@@ -135,7 +144,7 @@ void FrequentPatternCompressor::AppendPackedIntegers(int* integers, int size, in
             acc >>= 32;
         }
         while (bits < 32 && i < size) {
-            acc |= integers[i++] << bits;
+            acc |= (uint64_t)integers[i++] << bits;
             bits += bitsPerInt;
         }
     }

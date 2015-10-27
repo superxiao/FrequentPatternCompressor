@@ -17,6 +17,7 @@
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; settings = {ASSET_TAGS = (); }; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; settings = {ASSET_TAGS = (); }; };
 		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; settings = {ASSET_TAGS = (); }; };
+		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; settings = {ASSET_TAGS = (); }; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,8 @@
 		D85FC2E91BD8415F0058CD6D /* snappy */ = {isa = PBXFileReference; lastKnownFileType = folder; path = snappy; sourceTree = "<group>"; };
 		D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnappyCompressor.cpp; sourceTree = "<group>"; };
 		D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SnappyCompressor.hpp; sourceTree = "<group>"; };
+		D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequentPatternDecompressor.cpp; sourceTree = "<group>"; };
+		D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternDecompressor.hpp; sourceTree = "<group>"; };
 		D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrequentPatternCompressor; sourceTree = "<group>"; };
 		D8DD8EAC1BD866B50059803D /* libsnappy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsnappy.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +92,8 @@
 		D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */ = {
 			isa = PBXGroup;
 			children = (
+				D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */,
+				D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */,
 				D85FC2E91BD8415F0058CD6D /* snappy */,
 				D82DB6251BD18DA400249E13 /* main.cpp */,
 				D82DB62C1BD1956200249E13 /* Trie.cpp */,
@@ -169,6 +174,7 @@
 			files = (
 				D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */,
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
+				D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,

@@ -16,16 +16,33 @@
 #include "Utils.hpp"
 #include <chrono>
 #include "SnappyCompressor.hpp"
+#include "FrequentPatternDecompressor.hpp"
+#include "snappy/snappy.h"
 
 using namespace std;
 using namespace std::chrono;
 
 const int LINES_PER_BLOCK = 100000;
 
+const int REPEAT = 50;
+
 string compress_snappy(const string& data) {
     auto compressor = SnappyCompressor();
     string compressed = compressor.Compress(data);
     return move(compressed);
+}
+
+string decomrpess_snappy(const string& compressed) {
+    string decompressed;
+    snappy::Uncompress(compressed.c_str(), compressed.length(), &decompressed);
+    return move(decompressed);
+}
+
+string decompress_frequent(const string& compressed) {
+    auto decompressor = FrequentPatternDecompressor();
+    vector<int> lens;
+    auto decompressed = decompressor.Decompress(compressed, lens);
+    return move(decompressed);
 }
 
 string compress_frequent(const vector<string>& strings) {
@@ -42,11 +59,10 @@ void print_stat(long compressedSize, long size, long duration) {
 }
 
 void compress_file_snappy(string file) {
-    int repeats = 1000;
     long size = 0;
     long compressedSize = 0;
     long duration = 0;
-    for (int j = 0; j < repeats; j++) {
+    for (int j = 0; j < REPEAT; j++) {
         ifstream s(file);
         while (!s.eof()) {
             string data;
@@ -77,10 +93,10 @@ void compress_file_snappy(string file) {
 void compress_file_frequent(string file) {
     vector<string> strings;
     long duration = 0;
+    long decompressDuration = 0;
     long size = 0;
     long compressedSize = 0;
-    int repeats = 1000;
-    for (int j = 0; j < repeats; j++) {
+    for (int j = 0; j < REPEAT; j++) {
         ifstream s(file);
         while(!s.eof()) {
             int i = 0;
@@ -98,17 +114,21 @@ void compress_file_frequent(string file) {
             auto t2 = high_resolution_clock::now();
             compressedSize += compressed.length();
             duration += duration_cast<microseconds>( t2 - t1 ).count();
+            
+            t1 = high_resolution_clock::now();
+            auto decompressed = decompress_frequent(compressed);
+            t2 = high_resolution_clock::now();
+            decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
         }
         s.close();
     }
     print_stat(compressedSize, size, duration);
-    
+    cout << "Decompress time: " << decompressDuration / 1000.0 << " ms" << endl;
 }
 
 void compress_small_file_snappy(string file) {
     string data;
     ifstream s(file);
-    int repeats = 1000;
     long size = 0;
     for( string line; getline( s, line );)
     {
@@ -119,49 +139,64 @@ void compress_small_file_snappy(string file) {
     }
     s.close();
     size = data.size();
-    size *= repeats;
+    size *= REPEAT;
     long compressedSize = 0;
     long duration = 0;
-    for (int j = 0; j < repeats; j++) {
+    long decompressDuration = 0;
+    for (int j = 0; j < REPEAT; j++) {
         auto t1 = high_resolution_clock::now();
         auto compressed = compress_snappy(data);
         auto t2 = high_resolution_clock::now();
         compressedSize += compressed.length();
         duration += duration_cast<microseconds>( t2 - t1 ).count();
+        
+        t1 = high_resolution_clock::now();
+        auto decompressed = decomrpess_snappy(compressed);
+        t2 = high_resolution_clock::now();
+        decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
     }
     print_stat(compressedSize, size, duration);
+    cout << "Decompress time: " << decompressDuration / 1000.0 << " ms" << endl;
 }
 
 void compress_small_file_frequent(string file) {
     vector<string> strings;
     ifstream s(file);
-    int repeats = 1000;
     long size = 0;
     for(string line; getline(s, line);) {
         strings.push_back(line);
         size += line.length() + 2;
     }
     s.close();
-    size *= repeats;
+    size *= REPEAT;
     long compressedSize = 0;
     long duration = 0;
-    for (int j = 0; j < repeats; j++) {
+    long decompressDuration = 0;
+    for (int j = 0; j < REPEAT; j++) {
         auto t1 = high_resolution_clock::now();
         auto compressed = compress_frequent(strings);
         auto t2 = high_resolution_clock::now();
         compressedSize += compressed.length();
         duration += duration_cast<microseconds>( t2 - t1 ).count();
+        
+        t1 = high_resolution_clock::now();
+        auto decompressed = decompress_frequent(compressed);
+        t2 = high_resolution_clock::now();
+        decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
     }
     print_stat(compressedSize, size, duration);
+    cout << "Decompress time: " << decompressDuration / 1000.0 << " ms" << endl;
 }
 
 int main(int argc, const char * argv[]) {
-    //ifstream myfile("/Users/xiaojianwang/Desktop/dates.txt");
+    string file = "/Users/xiaojianwang/Desktop/dates.txt";
     //ifstream myfile("/Users/xiaojianwang/Desktop/uri.txt");
     //ifstream myfile("/Users/xiaojianwang/Desktop/alice29r.txt");
     //string file = "/Users/xiaojianwang/Documents/workspace/benchmarks/customer_address.txt";
-    string file = "/Users/xiaojianwang/Desktop/dates.txt";
-    compress_small_file_frequent(file);
+    //string file = "/Users/xiaojianwang/Documents/workspace/benchmarks/part_type.txt";
+    //string file = "/Users/xiaojianwang/Desktop/dates.txt";
+    //compress_file_frequent(file);
+    //compress_small_file_frequent(file);
+    compress_small_file_snappy(file);
     //compress_file_snappy(file);
-    //compress_small_file_snappy(file);
 }
