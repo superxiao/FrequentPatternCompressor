@@ -28,6 +28,6 @@ private:
 public:
     int charNum;
     long forwardCoverTime;
-    string Compress(const vector<string>& strings);
+    string Compress(const vector<string>& strings, int sample_size = 100, int support = 5);
 };
 #endif /* FrequentPatternCompressor_hpp */

@@ -20,7 +20,6 @@ public:
     
     Node* root;
     Node* currNode;
-    vector<Node*> indexedNodes;
     int totalEncodedLengthIntBits;
     int size = 0;
 
@@ -42,7 +41,6 @@ public:
     }
     inline void SetIndex(int index) {
         currNode->index = index;
-        indexedNodes[index] = currNode;
     }
     inline int GetIndex() {
         return currNode->index;

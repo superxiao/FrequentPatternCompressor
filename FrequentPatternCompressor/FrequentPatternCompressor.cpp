@@ -12,15 +12,16 @@
 #include <algorithm>
 #include <cstring>
 #include "PrefixSpan.hpp"
+#include <iostream>
 
 char out[10 * 1024 * 1024];
 int indixEnd = 0;
 int indices[10*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
-string FrequentPatternCompressor::Compress(const vector<string>& strings) {
+string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
     indixEnd = 0;
-    int sample_size = min(100, (int)strings.size());
+    sample_size = min(sample_size, (int)strings.size());
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
     //int size = 0;
@@ -32,7 +33,7 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings) {
         //sample[i] = strings[i];
     }
     
-    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, 5);
+    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
     
     patterns.reserve(strings.size() + 256);
     

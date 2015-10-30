@@ -7,6 +7,7 @@
 //
 
 #include "FrequentPatternDecompressor.hpp"
+#include <iostream>
 
 inline void UNALIGNED_STORE64(void *p, uint64_t v) {
     memcpy(p, &v, sizeof v);
@@ -58,17 +59,21 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
     int leading0s = __builtin_clz((unsigned)dict.size());
     int unsignedLen = sizeof(unsigned) * 8;
     int bitsPerIndex = unsignedLen - leading0s;
+    
     buffer = 0;
     bits = 0;
     mask = ~(-1 << bitsPerIndex);
     string result;
-    result.resize(uncompressed_size);
+    result.resize(uncompressed_size + 16);
+
     char* op = &*result.begin();
     auto size = compressed.size();
-    auto end = data + ((begin + size - data) / 4) * 4;
-    while (data != end) {
-        for (; bits < bitsPerIndex; bits+=32) {
+    auto end = begin + size;
+    auto end2 = end - (end - data) % 4;
+    while (data != end2) {
+        if(bits < bitsPerIndex) {
             buffer |= ((uint64_t)(*reinterpret_cast<const uint32_t*>(data)) << bits);
+            bits += 32;
             data += 4;
         }
         string* pattern = &dict[buffer & mask];
@@ -79,7 +84,7 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
             UNALIGNED_STORE64(curr_op, UNALIGNED_LOAD64(ip));
             //memcpy(op, &*dict[buffer & mask].begin(), 8);
             len -= 8;
-            if (len <= 0) {
+            if (__builtin_expect(len <= 0, 1)) {
                 break;
             }
             ip += 8;
@@ -91,10 +96,12 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
         bits -= bitsPerIndex;
         
     }
-    
-    buffer |= ((uint64_t)(*reinterpret_cast<const uint32_t*>(data)) << bits);
-    bits += (begin + size - end) * 8;
-    
+//    buffer |= ((uint64_t)(*reinterpret_cast<const uint32_t*>(data)) << bits);
+//    bits += (end - end2) * 8;
+    while(data != end) {
+        buffer |= ((uint64_t)(*data++) << bits);
+        bits += 8;
+    }
     while(bits >= bitsPerIndex) {
         string* pattern = &dict[buffer & mask];
         auto ip = &*pattern->begin();
@@ -104,6 +111,9 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
             UNALIGNED_STORE64(curr_op, UNALIGNED_LOAD64(ip));
             //memcpy(op, &*dict[buffer & mask].begin(), 8);
             len -= 8;
+            if (len <= 0) {
+                break;
+            }
             ip += 8;
             curr_op += 8;
         }
