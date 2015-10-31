@@ -38,44 +38,12 @@ int Trie::GetTotalEncodedLengthInBits(){
     return totalEncodedLengthIntBits;
 }
 
-void Trie::AddChildNode(uint8_t c){
-    size++;
-    Node* newChild = new Node();
-    currNode->children[c] = newChild;
-    currNode->frequentChildren.push_back(newChild);
-    newChild->str = currNode->str + (char)c;
-}
 
 int Trie::MySize(){
     return size;
 }
 
-void Trie::Remove(uint8_t c){
-    size--;
-    delete currNode->children[c];
-    currNode->children[c] = NULL;
-}
 
-bool Trie::HasChild(uint8_t c){
-    return currNode->children[c] != NULL;
-}
-
-void Trie::AddPatternPositionToChild(uint8_t c, const Position& position){
-    Node* child = currNode->children[c];
-    child->patternPositions.push_back(position);
-}
-
-void Trie::PruneInfrequentChildren(int minSupport){
-    for(auto itr = currNode->frequentChildren.begin(); itr != currNode->frequentChildren.end();) {
-        Node* node = *itr;
-        if (node->patternPositions.size() < minSupport) {
-            this->Remove(node->str.back());
-            itr = currNode->frequentChildren.erase(itr);
-            continue;
-        }
-        itr++;
-    }
-}
 
 void Trie::BuildTrie(const vector<string> &strings) {
     Node* currNode;

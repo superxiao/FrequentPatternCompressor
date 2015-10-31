@@ -23,9 +23,9 @@ public:
     
 private:
     static Trie* BuildTreeWithCharFrequencies(const vector<string>& strings, int minSupport);
-    static void PutCharPosition(Trie* tree, size_t stringIdx,
+    inline static void PutCharPosition(Trie* tree, size_t stringIdx,
                                 size_t charIdxInString, const string& string);
-    static bool PutPositionsOfExpanded(Trie* tree, int prefixLen,
+    inline static bool PutPositionsOfExpanded(Trie* tree, int prefixLen,
                                        Position prefixPos, const string& string);
     static void DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
