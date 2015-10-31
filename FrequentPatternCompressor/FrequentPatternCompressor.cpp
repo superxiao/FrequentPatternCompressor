@@ -18,12 +18,12 @@
 using namespace std::chrono;
 
 char out[10 * 1024 * 1024];
-int indixEnd = 0;
+int indexEnd = 0;
 int32_t indices[10*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
-    indixEnd = 0;
+    indexEnd = 0;
     sample_size = min(sample_size, (int)strings.size());
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
@@ -50,6 +50,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
     outEnd += sizeof(uncompressed_size);
     
+    uint32_t numStrings = (uint32_t)strings.size();
+    memcpy(out + outEnd, &numStrings, sizeof(uint32_t));
+    outEnd += sizeof(uint32_t);
+    
     for(auto &pattern : patterns) {
         uint16_t length = pattern.length();
         memcpy(out + outEnd, reinterpret_cast<char*>(&length), 2);
@@ -60,19 +64,45 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
 
     out[outEnd++] = 0;
     out[outEnd++] = 0;
-    AppendPackedLengths(strings);
-
-    size_t compressedSize = 10*1024*1024;
-    //encodeArray(reinterpret_cast<uint32_t*>(indices), indixEnd, compressed_output.data(), compressedSize);
+    
+    uint32_t* lens = new uint32_t[strings.size()];
+    
+    size_t compressedSize = 2 * strings.size();
+    
+    int i = 0;
+    for(auto& str : strings) {
+        lens[i] = (uint32_t)str.size();
+    }
+    
+    auto lenSizeField = reinterpret_cast<uint32_t*>(out + outEnd);
+    
+    outEnd += 4;
+    
     if (outEnd % 16 != 0){
         outEnd += 16 - outEnd % 16;
     }
-    encodeArray(reinterpret_cast<uint32_t*>(indices), indixEnd, reinterpret_cast<uint32_t*>(out + outEnd), compressedSize);
+    
+    encodeArray(lens,
+                strings.size(),
+                reinterpret_cast<uint32_t*>(out + outEnd),
+                compressedSize);
+    
+    delete[] lens;
+    
+    *lenSizeField = (uint32_t)compressedSize;
+    
+    outEnd += compressedSize * 4;
+    
+    compressedSize = 2 * indexEnd;
+    
+    encodeArray(reinterpret_cast<uint32_t*>(indices),
+                indexEnd,
+                reinterpret_cast<uint32_t*>(out + outEnd),
+                compressedSize);
     
     string result(out, outEnd + compressedSize * 4);
     delete trie;
     return result;
-    
 }
 
 void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& strings) {
@@ -126,7 +156,7 @@ void FrequentPatternCompressor::UseCurrentPattern(Trie* trie) {
         patterns.push_back(trie->GetString());
     }
     //trie->IncrementUsage();
-    indices[indixEnd++] =trie->GetIndex();
+    indices[indexEnd++] =trie->GetIndex();
     
 }
 

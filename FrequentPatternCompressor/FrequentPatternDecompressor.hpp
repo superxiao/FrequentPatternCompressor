@@ -18,7 +18,7 @@ using namespace std;
 class FrequentPatternDecompressor {
 public:
     vector<string> Decompress(const string& compressed);
-    string Decompress(const string& compressed, vector<int>& outLens);
+    string Decompress(const string& compressed, vector<uint32_t>& outLens);
     
 private:
     vector<int> UnpackIntegers(const char*& data);

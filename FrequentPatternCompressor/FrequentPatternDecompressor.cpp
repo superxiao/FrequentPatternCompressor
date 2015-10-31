@@ -22,12 +22,19 @@ inline uint64_t UNALIGNED_LOAD64(const void *p) {
 
 uint32_t integers[10 * 1024 * 1024];
 
-string FrequentPatternDecompressor::Decompress(const string& compressed, vector<int>& outLens) {
+string FrequentPatternDecompressor::Decompress(const string& compressed, vector<uint32_t>& outLens) {
     const uint8_t* begin = reinterpret_cast<const uint8_t*>(compressed.c_str());
     const uint8_t* data = begin;
     
     uint64_t uncompressed_size = *reinterpret_cast<const uint64_t*>(data);
     data += sizeof(uncompressed_size);
+    
+    uint32_t numStrings = *reinterpret_cast<const uint32_t*>(data);
+    data += sizeof(numStrings);
+    
+    if (outLens.size() < numStrings) {
+        outLens.resize(numStrings);
+    }
     
     vector<const uint8_t*> dict;
     vector<int> lens;
@@ -42,40 +49,25 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
         data += patternLen;
     }
     
-    int intNum = (int)*reinterpret_cast<const uint32_t*>(data);
+    uint32_t lenSize = *reinterpret_cast<const uint32_t*>(data);
+    
     data += 4;
-    int minInt = (int)*reinterpret_cast<const uint16_t*>(data);
-    data += 2;
-    int bitsPerInt = (int)*reinterpret_cast<const uint16_t*>(data);
-    data += 2;
-    uint64_t buffer = 0;
-    int bits = 0;
-    unsigned long mask = ~(-1 << bitsPerInt);
-    for (int i = 0; i < intNum; i++) {
-        for (; bits < bitsPerInt; bits += 8) {
-            buffer |= ((*data) << bits);
-            data++;
-        }
-        outLens.push_back((int)(buffer & mask) + minInt);
-        buffer >>= bitsPerInt;
-        bits -= bitsPerInt;
-    }
-    
-    int leading0s = __builtin_clz((unsigned)dict.size());
-    int unsignedLen = sizeof(unsigned) * 8;
-    int bitsPerIndex = unsignedLen - leading0s;
-    
-    buffer = 0;
-    bits = 0;
-    mask = ~(-1 << bitsPerIndex);
-    string result;
-    result.resize(uncompressed_size);
-    
-    size_t recoveredsize = uncompressed_size;
     
     if ((data - begin) % 16 != 0){
         data += 16 - (data - begin) % 16;
     }
+    
+    size_t recoveredsize = uncompressed_size;
+    
+    decodeArray(reinterpret_cast<const uint32_t*>(data),
+                lenSize, reinterpret_cast<uint32_t*>(outLens.data()), recoveredsize);
+
+    string result;
+    result.resize(uncompressed_size);
+    
+    data += lenSize * 4;
+    
+    recoveredsize = uncompressed_size;
     
     decodeArray(reinterpret_cast<const uint32_t*>(data),
                       (begin + compressed.size() - data) / 4, integers, recoveredsize);
@@ -104,7 +96,7 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
 }
 
 vector<string> FrequentPatternDecompressor::Decompress(const string& compressed) {
-    vector<int> lens;
+    vector<uint32_t> lens;
     string decompressed = Decompress(compressed, lens);
     vector<string> result;
     auto curr = decompressed.begin();

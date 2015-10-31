@@ -56,7 +56,7 @@ inline string decomrpess_snappy(const string& compressed) {
 
 inline string decompress_frequent(const string& compressed) {
     auto decompressor = FrequentPatternDecompressor();
-    vector<int> lens;
+    vector<uint32_t> lens;
     auto decompressed = decompressor.Decompress(compressed, lens);
     return move(decompressed);
 }
@@ -290,7 +290,7 @@ int main(int argc, const char * argv[]) {
             cout << "Benchmarking " << file << endl;
             auto f_stat = compress_file_frequent(indir + file + ".txt");
             //append_stat(outdir + "frequent_" + file + ".txt", f_stat);
-            //auto s_stat = compress_file_snappy(indir + file + ".txt");
+            auto s_stat = compress_file_snappy(indir + file + ".txt");
             //append_stat(outdir + "snappy_" + file + ".txt", s_stat);
             //compress_file_frequent_varying(file, 1);
         }
