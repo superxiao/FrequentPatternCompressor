@@ -105,35 +105,6 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     return result;
 }
 
-void FrequentPatternCompressor::AppendPackedLengths(const vector<string>& strings) {
-    vector<int> lengths;
-    lengths.reserve(strings.size());
-    int minLen = (int)strings[0].size();
-    int maxLen = minLen;
-    for (const string& s : strings) {
-        lengths.push_back((int)s.size());
-        minLen = min(minLen, (int)s.size());
-        maxLen = max(maxLen, (int)s.size());
-    }
-    for (int& i : lengths) {
-        i -= minLen;
-    }
-    int size = (int)strings.size();
-    memcpy(out + outEnd, reinterpret_cast<char*>(&size), 4);
-    outEnd += 4;
-    memcpy(out + outEnd, reinterpret_cast<char*>(&minLen), 2);
-    outEnd += 2;
-    int bitsPerLen = 0;
-    if (maxLen > minLen) {
-        int leading0s = __builtin_clz((unsigned)(maxLen - minLen));
-        bitsPerLen = sizeof(unsigned) * 8 - leading0s; // TODO clz doesn't support 0?
-    }
-    memcpy(out + outEnd, reinterpret_cast<char*>(&bitsPerLen), 2);
-    outEnd += 2;
-    AppendPackedIntegers(&lengths[0], (int)lengths.size(), bitsPerLen);
-}
-
-
 void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
@@ -159,32 +130,3 @@ void FrequentPatternCompressor::UseCurrentPattern(Trie* trie) {
     indices[indexEnd++] =trie->GetIndex();
     
 }
-
-void FrequentPatternCompressor::AppendPackedIntegers(int* integers, int size, int bitsPerInt){
-    // resize first using outSize to optmize?
-    // int outSize = (indices.size() * bitsPerIndex + 7) / 8;
-    if (bitsPerInt == 0) {
-        return;
-    }
-    uint64_t acc = 0;
-    int bits = 0;
-    int i = 0;
-    while (i < size) {
-        if (bits) {
-            memcpy(out + outEnd, &acc, 4);
-            outEnd += 4;
-            bits -= 32;
-            acc >>= 32;
-        }
-        while (bits < 32 && i < size) {
-            acc |= (uint64_t)integers[i++] << bits;
-            bits += bitsPerInt;
-        }
-    }
-    
-    for (; bits > 0; bits -= 8) {
-        out[outEnd++] = (char)acc;
-        acc >>= 8;
-    }
-}
-
