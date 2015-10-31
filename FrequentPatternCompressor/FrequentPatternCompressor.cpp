@@ -65,13 +65,12 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     out[outEnd++] = 0;
     out[outEnd++] = 0;
     
-    uint32_t* lens = new uint32_t[strings.size()];
+    vector<uint32_t> lens;
     
     size_t compressedSize = 2 * strings.size();
-    
-    int i = 0;
+
     for(auto& str : strings) {
-        lens[i] = (uint32_t)str.size();
+        lens.push_back((uint32_t)str.size());
     }
     
     auto lenSizeField = reinterpret_cast<uint32_t*>(out + outEnd);
@@ -82,12 +81,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         outEnd += 16 - outEnd % 16;
     }
     
-    encodeArray(lens,
+    encodeArray(lens.data(),
                 strings.size(),
                 reinterpret_cast<uint32_t*>(out + outEnd),
                 compressedSize);
-    
-    delete[] lens;
     
     *lenSizeField = (uint32_t)compressedSize;
     
