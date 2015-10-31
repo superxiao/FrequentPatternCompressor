@@ -13,6 +13,10 @@
 #include <iomanip>
 #include <cstring>
 
+#include "headers/codecfactory.h"
+
+using namespace FastPForLib;
+
 vector<string> random_dates(int n) {
     vector<string> strings;
     random_device rd;
@@ -29,3 +33,18 @@ vector<string> random_dates(int n) {
     }
     return strings;
 }
+
+void encodeArray(const uint32_t *in, const size_t length, uint32_t *out,
+                 size_t &nvalue) {
+    string codecName = "simdbinarypacking";
+    FastPForLib::IntegerCODEC & codec = * FastPForLib::CODECFactory::getFromName(codecName);
+    codec.encodeArray(in, length, out, nvalue);
+}
+
+const uint32_t * decodeArray(const uint32_t *in, const size_t length,
+                             uint32_t *out, size_t & nvalue) {
+    string codecName = "simdbinarypacking";
+    FastPForLib::IntegerCODEC & codec = * FastPForLib::CODECFactory::getFromName(codecName);
+    return codec.decodeArray(in, length, out, nvalue);
+}
+

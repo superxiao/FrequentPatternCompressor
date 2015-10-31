@@ -18,4 +18,11 @@ using namespace std;
 
 vector<string> random_dates(int n);
 
+void encodeArray(const uint32_t *in, const size_t length, uint32_t *out,
+                 size_t &nvalue);
+
+const uint32_t * decodeArray(const uint32_t *in, const size_t length,
+                             uint32_t *out, size_t & nvalue);
+
+
 #endif /* Utils_hpp */

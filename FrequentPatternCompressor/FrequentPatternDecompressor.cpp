@@ -8,6 +8,7 @@
 
 #include "FrequentPatternDecompressor.hpp"
 #include <iostream>
+#include "Utils.hpp"
 
 inline void UNALIGNED_STORE64(void *p, uint64_t v) {
     memcpy(p, &v, sizeof v);
@@ -19,6 +20,8 @@ inline uint64_t UNALIGNED_LOAD64(const void *p) {
     return t;
 }
 
+uint32_t integers[10 * 1024 * 1024];
+
 string FrequentPatternDecompressor::Decompress(const string& compressed, vector<int>& outLens) {
     const uint8_t* begin = reinterpret_cast<const uint8_t*>(compressed.c_str());
     const uint8_t* data = begin;
@@ -26,14 +29,16 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
     uint64_t uncompressed_size = *reinterpret_cast<const uint64_t*>(data);
     data += sizeof(uncompressed_size);
     
-    vector<string> dict;
+    vector<const uint8_t*> dict;
+    vector<int> lens;
     while (true) {
         int patternLen = (int)*reinterpret_cast<const uint16_t*>(data);
         data += 2;
         if (patternLen == 0) {
             break;
         }
-        dict.emplace_back(data, data + patternLen);
+        dict.push_back(data);
+        lens.push_back(patternLen);
         data += patternLen;
     }
     
@@ -64,62 +69,34 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
     bits = 0;
     mask = ~(-1 << bitsPerIndex);
     string result;
-    result.resize(uncompressed_size + 16);
-
+    result.resize(uncompressed_size);
+    
+    size_t recoveredsize = uncompressed_size;
+    
+    if ((data - begin) % 16 != 0){
+        data += 16 - (data - begin) % 16;
+    }
+    
+    decodeArray(reinterpret_cast<const uint32_t*>(data),
+                      (begin + compressed.size() - data) / 4, integers, recoveredsize);
     char* op = &*result.begin();
-    auto size = compressed.size();
-    auto end = begin + size;
-    auto end2 = end - (end - data) % 4;
-    while (data != end2) {
-        if(bits < bitsPerIndex) {
-            buffer |= ((uint64_t)(*reinterpret_cast<const uint32_t*>(data)) << bits);
-            bits += 32;
-            data += 4;
-        }
-        string* pattern = &dict[buffer & mask];
-        auto ip = &*pattern->begin();
-        int len = (int)pattern->length();
+    auto end = integers + recoveredsize;
+    for(auto p = integers; p != end; p++) {
+        const uint8_t* pattern_ip = dict[*p];
+        int len = (int)lens[*p];
         auto curr_op = op;
         while (true) {
-            UNALIGNED_STORE64(curr_op, UNALIGNED_LOAD64(ip));
+            UNALIGNED_STORE64(curr_op, UNALIGNED_LOAD64(pattern_ip));
             //memcpy(op, &*dict[buffer & mask].begin(), 8);
             len -= 8;
             if (__builtin_expect(len <= 0, 1)) {
                 break;
             }
-            ip += 8;
+            pattern_ip += 8;
             curr_op += 8;
-
+            
         }
-        op += pattern->length();
-        buffer >>= bitsPerIndex;
-        bits -= bitsPerIndex;
-        
-    }
-//    buffer |= ((uint64_t)(*reinterpret_cast<const uint32_t*>(data)) << bits);
-//    bits += (end - end2) * 8;
-    while(data != end) {
-        buffer |= ((uint64_t)(*data++) << bits);
-        bits += 8;
-    }
-    while(bits >= bitsPerIndex) {
-        string* pattern = &dict[buffer & mask];
-        auto ip = &*pattern->begin();
-        int len = (int)pattern->length();
-        auto curr_op = op;
-        while (len > 0) {
-            UNALIGNED_STORE64(curr_op, UNALIGNED_LOAD64(ip));
-            //memcpy(op, &*dict[buffer & mask].begin(), 8);
-            len -= 8;
-            if (len <= 0) {
-                break;
-            }
-            ip += 8;
-            curr_op += 8;
-        }
-        op += pattern->length();
-        buffer >>= bitsPerIndex;
-        bits -= bitsPerIndex;
+        op += lens[*p];
     }
     
     result.resize(op - &*result.begin());
@@ -136,27 +113,4 @@ vector<string> FrequentPatternDecompressor::Decompress(const string& compressed)
         curr += len;
     }
     return move(result);
-}
-
-vector<int> FrequentPatternDecompressor::UnpackIntegers(const char*& data) {
-    int intNum = (int)*reinterpret_cast<const uint32_t*>(data);
-    data += 4;
-    int minInt = (int)*reinterpret_cast<const uint16_t*>(data);
-    data += 2;
-    int bitsPerInt = (int)*reinterpret_cast<const uint16_t*>(data);
-    data += 2;
-    vector<int> integers;
-    unsigned long buffer = 0;
-    int bits = 0;
-    unsigned long mask = ~(-1 << bitsPerInt);
-    for (int i = 0; i < intNum; i++) {
-        for (; bits < bitsPerInt; bits += 8) {
-            buffer &= ((*data) << bits);
-            data++;
-        }
-        integers.push_back((int)(buffer & mask) + minInt);
-        buffer >>= bitsPerInt;
-        bits -= bitsPerInt;
-    }
-    return integers;
 }

@@ -13,10 +13,13 @@
 #include <cstring>
 #include "PrefixSpan.hpp"
 #include <iostream>
+#include "Utils.hpp"
+
+using namespace std::chrono;
 
 char out[10 * 1024 * 1024];
 int indixEnd = 0;
-int indices[10*1024*1024]; // Dynamic or static no difference
+int32_t indices[10*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
@@ -24,10 +27,7 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     sample_size = min(sample_size, (int)strings.size());
     vector<string> sample(sample_size);
     srand((unsigned)time(NULL));
-    //int size = 0;
-    //for (const string& s : strings) {
-    //    size += s.length();
-    //}
+
     for (size_t i = 0; i < sample_size; i++) {
         sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
         //sample[i] = strings[i];
@@ -45,9 +45,6 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         ForwardCover(s, trie);
         uncompressed_size += s.length();
     }
-    //if (size > out.capacity()) {
-    //    out.reserve(size);
-    //}
     
     outEnd = 0;
     memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
@@ -60,14 +57,19 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         memcpy(out + outEnd, pattern.c_str(), pattern.length());
         outEnd += pattern.length();
     }
-    //indices.reserve(charNum);
+
     out[outEnd++] = 0;
     out[outEnd++] = 0;
-    
     AppendPackedLengths(strings);
-    int bitsPerIndex = sizeof(unsigned) * 8 - __builtin_clz((unsigned)patterns.size());
-    AppendPackedIntegers(indices, indixEnd, bitsPerIndex);
-    string result(out, outEnd);
+
+    size_t compressedSize = 10*1024*1024;
+    //encodeArray(reinterpret_cast<uint32_t*>(indices), indixEnd, compressed_output.data(), compressedSize);
+    if (outEnd % 16 != 0){
+        outEnd += 16 - outEnd % 16;
+    }
+    encodeArray(reinterpret_cast<uint32_t*>(indices), indixEnd, reinterpret_cast<uint32_t*>(out + outEnd), compressedSize);
+    
+    string result(out, outEnd + compressedSize * 4);
     delete trie;
     return result;
     
