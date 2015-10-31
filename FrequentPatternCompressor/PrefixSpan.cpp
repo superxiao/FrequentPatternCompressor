@@ -16,19 +16,19 @@ Trie* PrefixSpan::BuildTreeWithCharFrequencies(const vector<string>& strings, in
         const string& string = strings[stringIdx];
         for (size_t charIdx = 0; charIdx < string.length(); charIdx++) {
             uint8_t c = *reinterpret_cast<const uint8_t*>(&strings[stringIdx][charIdx]);
-            projected[c].push_back(move(Position{stringIdx, charIdx, c}));
+            projected[c].push_back(move(Position{(uint32_t)stringIdx, (uint32_t)charIdx}));
         }
     }
     for(int c = 0; c < 256; c++) {
         if (projected[c].size() >= minSupport) {
-            tree->AddChildNode(c, move(projected[c]));
+            tree->AddChildNode(c, &projected[c]);
         }
     }
     return tree;
 }
 
-vector<vector<Position>> projected(256);
-vector<vector<Position>*> ls;
+vector<Position> projected[256];
+vector<uint8_t> ls;
 
 void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
                                                      const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
@@ -38,20 +38,20 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
         const string& str = strings[prefixPos.stringIndex];
         size_t nextCharPos = prefixPos.positionInString + prefixLen;
         if (nextCharPos < str.length()) {
-            uint8_t c = *reinterpret_cast<const uint8_t*>(&str[nextCharPos]); // TODO better way?
-            projected[c].push_back(Position{prefixPos.stringIndex, prefixPos.positionInString, c});
+            uint8_t c = str[nextCharPos]; // TODO better way?
+            projected[c].push_back(prefixPos);
             if (projected[c].size() == 1) {
-                ls.push_back(&projected[c]);
+                ls.push_back(c);
             }
         }
     }
     for(auto poss : ls) {
-        if (poss->size() >= minSupport) {
-            tree->AddChildNode(poss->at(0).c, move(*poss));
+        auto& vec = projected[poss];
+        if (vec.size() >= minSupport) {
+            tree->AddChildNode(poss, &vec);
         }
+        vec.clear();
     }
-    projected.clear();
-    projected.resize(256);
     ls.clear();
     auto& children = tree->currNode->frequentChildren;
     Node* currNode = tree->currNode;

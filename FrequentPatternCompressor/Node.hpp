@@ -17,9 +17,8 @@
 using namespace std;
 
 struct Position {
-    size_t stringIndex;
-    size_t positionInString;
-    uint8_t c;
+    uint32_t stringIndex;
+    uint32_t positionInString;
 };
 
 struct Node {

@@ -49,12 +49,16 @@ public:
     inline string GetString() {
         return currNode->str;
     }
-    void AddChildNode(uint8_t c, vector<Position>&&);
+    inline void AddChildNode(uint8_t c, vector<Position>* positions) {
+        size++;
+        Node* newChild = new Node();
+        currNode->children[c] = newChild;
+        currNode->frequentChildren.push_back(newChild);
+        newChild->str = currNode->str + (char)c;
+        newChild->patternPositions = *positions;
+    }
+    
     int MySize();
-    void Remove(uint8_t);
-    bool HasChild(uint8_t);
-    void AddPatternPositionToChild(uint8_t, const Position&);
-    void PruneInfrequentChildren(int minSupport);
     void BuildTrie(const vector<string>& strings);
 };
 
