@@ -10,16 +10,6 @@
 #include <iostream>
 #include "Utils.hpp"
 
-inline void UNALIGNED_STORE64(void *p, uint64_t v) {
-    memcpy(p, &v, sizeof v);
-}
-
-inline uint64_t UNALIGNED_LOAD64(const void *p) {
-    uint64_t t;
-    memcpy(&t, p, sizeof t);
-    return t;
-}
-
 uint32_t integers[10 * 1024 * 1024];
 
 string FrequentPatternDecompressor::Decompress(const string& compressed, vector<uint32_t>& outLens) {

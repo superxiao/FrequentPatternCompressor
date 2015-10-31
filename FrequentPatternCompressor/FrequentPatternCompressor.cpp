@@ -51,12 +51,12 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     outEnd += sizeof(uncompressed_size);
     
     uint32_t numStrings = (uint32_t)strings.size();
-    memcpy(out + outEnd, &numStrings, sizeof(uint32_t));
-    outEnd += sizeof(uint32_t);
+    memcpy(out + outEnd, &numStrings, sizeof(numStrings));
+    outEnd += sizeof(numStrings);
     
     for(auto &pattern : patterns) {
         uint16_t length = pattern.length();
-        memcpy(out + outEnd, reinterpret_cast<char*>(&length), 2);
+        memcpy(out + outEnd, &length, 2);
         outEnd += 2;
         memcpy(out + outEnd, pattern.c_str(), pattern.length());
         outEnd += pattern.length();

@@ -24,5 +24,14 @@ void encodeArray(const uint32_t *in, const size_t length, uint32_t *out,
 const uint32_t * decodeArray(const uint32_t *in, const size_t length,
                              uint32_t *out, size_t & nvalue);
 
+inline void UNALIGNED_STORE64(void *p, uint64_t v) {
+    memcpy(p, &v, sizeof v);
+}
+
+inline uint64_t UNALIGNED_LOAD64(const void *p) {
+    uint64_t t;
+    memcpy(&t, p, sizeof t);
+    return t;
+}
 
 #endif /* Utils_hpp */
