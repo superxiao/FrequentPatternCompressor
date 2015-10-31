@@ -22,6 +22,25 @@ int indexEnd = 0;
 int32_t indices[10*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
+void CompareTrie(Node* trie1, Node* trie2) {
+    for(int i = 0; i < 256; i++) {
+        auto c1 = trie1->children[i];
+        auto c2 = trie2->children[i];
+        if (!c1 && !c2) {
+            continue;
+        }
+        if (c1 && c2) {
+            CompareTrie(c1, c2);
+        }
+        else {
+            if (c1) {
+                cout << "Frequent pattern in trie 1 but not trie 2:\n" << c1->str<<endl;
+                cout << "Frequent pattern in trie 2 but not trie 1:\n" << c2->str<<endl;
+            }
+        }
+    }
+}
+
 string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
     indexEnd = 0;
     sample_size = min(sample_size, (int)strings.size());
