@@ -38,12 +38,13 @@ int Trie::GetTotalEncodedLengthInBits(){
     return totalEncodedLengthIntBits;
 }
 
-void Trie::AddChildNode(uint8_t c){
+void Trie::AddChildNode(uint8_t c, vector<Position>&& positions){
     size++;
     Node* newChild = new Node();
     currNode->children[c] = newChild;
     currNode->frequentChildren.push_back(newChild);
     newChild->str = currNode->str + (char)c;
+    newChild->patternPositions = move(positions);
 }
 
 int Trie::MySize(){

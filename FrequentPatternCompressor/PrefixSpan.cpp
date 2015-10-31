@@ -11,35 +11,24 @@
 
 Trie* PrefixSpan::BuildTreeWithCharFrequencies(const vector<string>& strings, int minSupport) {
     Trie* tree = new Trie();
+    vector<vector<Position>> projected(256);
     for (size_t stringIdx = 0; stringIdx < strings.size(); stringIdx++) {
         const string& string = strings[stringIdx];
         for (size_t charIdx = 0; charIdx < string.length(); charIdx++) {
-            PutCharPosition(tree, stringIdx, charIdx, string);
+            uint8_t c = *reinterpret_cast<const uint8_t*>(&strings[stringIdx][charIdx]);
+            projected[c].push_back(move(Position{stringIdx, charIdx, c}));
         }
     }
-    tree->PruneInfrequentChildren(minSupport);
+    for(int c = 0; c < 256; c++) {
+        if (projected[c].size() >= minSupport) {
+            tree->AddChildNode(c, move(projected[c]));
+        }
+    }
     return tree;
 }
 
-void PrefixSpan::PutCharPosition(Trie* tree, size_t stringIdx,
-                                 size_t charIdxInString, const string& string) {
-    PutPositionsOfExpanded(tree, 0, move(Position{stringIdx, charIdxInString}),
-                           string);
-}
-
-bool PrefixSpan::PutPositionsOfExpanded(Trie* tree, int prefixLen,
-                                        Position prefixPos, const string& string) {
-    size_t nextCharPos = prefixPos.positionInString + prefixLen;
-    if (nextCharPos < string.length()) {
-        char c = string[nextCharPos];
-        if (!tree->HasChild(c)) {
-            tree->AddChildNode(c);
-        }
-        tree->AddPatternPositionToChild(c, prefixPos);
-        return true;
-    }
-    return false;
-}
+vector<vector<Position>> projected(256);
+vector<vector<Position>*> ls;
 
 void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
                                                      const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
@@ -47,9 +36,23 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
     {
         Position prefixPos = prefixPositions[i];
         const string& str = strings[prefixPos.stringIndex];
-        PutPositionsOfExpanded(tree, prefixLen, prefixPos, str);
+        size_t nextCharPos = prefixPos.positionInString + prefixLen;
+        if (nextCharPos < str.length()) {
+            uint8_t c = *reinterpret_cast<const uint8_t*>(&str[nextCharPos]); // TODO better way?
+            projected[c].push_back(Position{prefixPos.stringIndex, prefixPos.positionInString, c});
+            if (projected[c].size() == 1) {
+                ls.push_back(&projected[c]);
+            }
+        }
     }
-    tree->PruneInfrequentChildren(minSupport);
+    for(auto poss : ls) {
+        if (poss->size() >= minSupport) {
+            tree->AddChildNode(poss->at(0).c, move(*poss));
+        }
+    }
+    projected.clear();
+    projected.resize(256);
+    ls.clear();
     auto& children = tree->currNode->frequentChildren;
     Node* currNode = tree->currNode;
     for (auto itr = children.begin(); itr != children.end(); itr++) {

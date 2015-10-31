@@ -49,7 +49,7 @@ public:
     inline string GetString() {
         return currNode->str;
     }
-    void AddChildNode(uint8_t c);
+    void AddChildNode(uint8_t c, vector<Position>&&);
     int MySize();
     void Remove(uint8_t);
     bool HasChild(uint8_t);
