@@ -130,19 +130,20 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
         if (child) {
             currNode = child;
         } else {
-            UseCurrentPattern(trie);
+            UseCurrentPattern(currNode);
             currNode = root->children[c];
         }
     }
-    UseCurrentPattern(trie);
+    UseCurrentPattern(currNode);
 }
 
-void FrequentPatternCompressor::UseCurrentPattern(Trie* trie) {
-    if (trie->GetIndex() == -1) {
-        trie->SetIndex((int)patterns.size());
-        patterns.push_back(trie->GetString());
+void FrequentPatternCompressor::UseCurrentPattern(Node* node) {
+    auto& index = node->index;
+    if (index == -1) {
+        index = (int)patterns.size();
+        patterns.push_back(node->str);
     }
     //trie->IncrementUsage();
-    indices[indexEnd++] =trie->GetIndex();
+    indices[indexEnd++] =index;
     
 }

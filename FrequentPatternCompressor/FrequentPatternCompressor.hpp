@@ -20,7 +20,7 @@ private:
     // Does inining make a difference?
     inline void ForwardCover(const string& string, Trie* trie);
     
-    inline void UseCurrentPattern(Trie* trie);
+    inline void UseCurrentPattern(Node* node);
     
     void AppendPackedLengths(const vector<string>& strings);
     void AppendPackedIntegers(int* integers, int size, int bitsPerInt);
