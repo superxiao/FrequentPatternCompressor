@@ -19,7 +19,6 @@
 		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; };
 		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; };
 		D8ABE61A1BF672C3001D9C20 /* GoKrimp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */; };
-		D8ABE61B1BF672C3001D9C20 /* PatternGrowthCommons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8ABE6181BF672C3001D9C20 /* PatternGrowthCommons.cpp */; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 		D8EAF2701BE4164200D68BBE /* libFastPFor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8EAF26F1BE4164200D68BBE /* libFastPFor.a */; };
 /* End PBXBuildFile section */
@@ -60,7 +59,6 @@
 		D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternDecompressor.hpp; sourceTree = "<group>"; };
 		D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GoKrimp.cpp; sourceTree = "<group>"; };
 		D8ABE6171BF672C3001D9C20 /* GoKrimp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GoKrimp.hpp; sourceTree = "<group>"; };
-		D8ABE6181BF672C3001D9C20 /* PatternGrowthCommons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternGrowthCommons.cpp; sourceTree = "<group>"; };
 		D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PatternGrowthCommons.hpp; sourceTree = "<group>"; };
 		D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrequentPatternCompressor; sourceTree = "<group>"; };
 		D8DD8EAC1BD866B50059803D /* libsnappy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsnappy.a; sourceTree = "<group>"; };
@@ -104,7 +102,6 @@
 			children = (
 				D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */,
 				D8ABE6171BF672C3001D9C20 /* GoKrimp.hpp */,
-				D8ABE6181BF672C3001D9C20 /* PatternGrowthCommons.cpp */,
 				D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */,
 				D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */,
 				D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */,
@@ -187,7 +184,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */,
-				D8ABE61B1BF672C3001D9C20 /* PatternGrowthCommons.cpp in Sources */,
 				D8ABE61A1BF672C3001D9C20 /* GoKrimp.cpp in Sources */,
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */,

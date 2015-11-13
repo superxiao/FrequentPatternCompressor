@@ -23,9 +23,7 @@ inline Trie* BuildTreeWithCharFrequencies(const vector<string>& strings, int min
         }
     }
     for(int c = 0; c < 256; c++) {
-        if (projected[c].size() >= minSupport) {
-            tree->AddChildNode(c, &projected[c]);
-        }
+        tree->AddChildNode(c, &projected[c]);
     }
     return tree;
 }

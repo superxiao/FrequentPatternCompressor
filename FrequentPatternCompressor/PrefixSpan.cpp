@@ -52,9 +52,7 @@ Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupp
     // bug
     Node** children = tree->currNode->children;
     for (int i = 0; i < 256; i++) {
-        if (children[i] == NULL) {
-            children[i] = new Node();
-            children[i]->str = (char) i;
+        if (children[i]->patternPositions.size() < minSupport) {
             continue;
         }
         Node* currNode = tree->currNode;
