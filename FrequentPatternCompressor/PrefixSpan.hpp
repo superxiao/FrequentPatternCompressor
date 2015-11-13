@@ -22,7 +22,6 @@ public:
     static Trie* GetFrequentPatterns(const vector<string>& strings, int minSupport);
     
 private:
-    inline static Trie* BuildTreeWithCharFrequencies(const vector<string>& strings, int minSupport);
     inline static void PutCharPosition(Trie* tree, size_t stringIdx,
                                 size_t charIdxInString, const string& string);
     static void DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
