@@ -14,12 +14,13 @@
 #include "PrefixSpan.hpp"
 #include <iostream>
 #include "Utils.hpp"
+#include "GoKrimp.hpp"
 
 using namespace std::chrono;
 
 char out[10 * 1024 * 1024];
 int indexEnd = 0;
-int32_t indices[10*1024*1024]; // Dynamic or static no difference
+int32_t indices[50*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 void CompareTrie(Node* trie1, Node* trie2) {
@@ -52,8 +53,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         //sample[i] = strings[i];
     }
     
-    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
-    
+    //Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
+    vector<int> freqs;
+    Trie* trie = GoKrimp::GetCompressingPatternsTrie(sample, 1000, freqs);
+    patterns.clear();
     patterns.reserve(strings.size() + 256);
     
     // Using 32 bit here will cause later copying to be slower. But that

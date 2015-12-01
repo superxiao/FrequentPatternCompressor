@@ -13,6 +13,7 @@
 		D80CFEE41BD6DBD800121CA8 /* TestTrie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE21BD6DBD800121CA8 /* TestTrie.cpp */; };
 		D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */; };
 		D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80CFEE81BD70DD700121CA8 /* Utils.cpp */; };
+		D80D281F1C039EA000368523 /* TestGoKrimp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D80D281E1C039EA000368523 /* TestGoKrimp.cpp */; };
 		D82DB6261BD18DA400249E13 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB6251BD18DA400249E13 /* main.cpp */; };
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; };
@@ -46,6 +47,7 @@
 		D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestPrefixSpan.cpp; sourceTree = "<group>"; };
 		D80CFEE81BD70DD700121CA8 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		D80CFEE91BD70DD700121CA8 /* Utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
+		D80D281E1C039EA000368523 /* TestGoKrimp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestGoKrimp.cpp; sourceTree = "<group>"; };
 		D82DB6221BD18DA400249E13 /* FrequentPatternCompressor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FrequentPatternCompressor; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82DB6251BD18DA400249E13 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D82DB62C1BD1956200249E13 /* Trie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trie.cpp; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 		D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */ = {
 			isa = PBXGroup;
 			children = (
+				D80D281E1C039EA000368523 /* TestGoKrimp.cpp */,
 				D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */,
 				D8ABE6171BF672C3001D9C20 /* GoKrimp.hpp */,
 				D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */,
@@ -190,6 +193,7 @@
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
+				D80D281F1C039EA000368523 /* TestGoKrimp.cpp in Sources */,
 				D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,

@@ -48,14 +48,18 @@ int Trie::MySize(){
 
 void Trie::BuildTrie(const vector<string> &strings) {
     Node* currNode;
-    for (auto& child : root->children) {
-        child = new Node();
+    for (int c = 0; c < 256; c++) {
+        root->children[c] = new Node();
+        root->children[c]->str += char(c);
+        size++;
     }
     for (const string& str : strings) {
         currNode = root;
         for (char c : str) {
             if (!currNode->children[c]) {
                 currNode->children[c] = new Node();
+                currNode->children[c]->str = currNode->str + c;
+                size++;
             }
             currNode = currNode->children[c];
         }

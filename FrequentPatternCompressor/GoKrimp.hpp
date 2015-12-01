@@ -15,7 +15,9 @@
 class GoKrimp {
 public:
     GoKrimp();
-    Trie* GetCompressingPatterns(const vector<string>& strings, int minSupport);
+    static vector<string> GetCompressingPatterns(const vector<string>& strings, int k, vector<int>& freqs);
+    static Trie* GetCompressingPatternsTrie(const vector<string>& strings, int k, vector<int>& freqs);
+    static double Compress(const vector<string>& strings);
 private:
     
 };

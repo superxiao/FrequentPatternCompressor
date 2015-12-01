@@ -7,9 +7,15 @@
 //
 
 #include <stdio.h>
-
+#include <unordered_set>
+#include <iostream>
 #include "catch.hpp"
 #include "PrefixSpan.hpp"
+#include "GoKrimp.hpp"
+#include "Utils.hpp"
+
+using namespace std;
+using namespace std::chrono;
 
 TEST_CASE( "PrefixSpan should be able to find just the frequent"
           " patterns in input, and nothing more", "[PrefixSpan]" ) {
