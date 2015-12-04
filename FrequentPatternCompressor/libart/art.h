@@ -139,6 +139,8 @@ inline uint64_t art_size(art_tree *t) {
  */
 void* art_insert(art_tree *t, const unsigned char *key, int key_len, void *value);
 
+int art_match_len(const art_tree *t, const unsigned char *key, int key_len);
+
 /**
  * Deletes a value from the ART tree
  * @arg t The tree

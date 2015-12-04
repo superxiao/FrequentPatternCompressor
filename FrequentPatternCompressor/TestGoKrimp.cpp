@@ -56,39 +56,39 @@ TEST_CASE( "GoKrimp should find the most compressing patterns."
 //    //REQUIRE((patterns == vector<string> {"1", "23", "234", "5"}));
 //}
 
-TEST_CASE( "GoKrimp compression test"
-          , "[GoKrimp]" ) {
-    GoKrimp goKrimp;
-    FrequentPatternCompressor compressor;
-    auto dates = random_dates(10000);
-    long duration1 = 0;
-    long duration2 = 0;
-    
-    long len = 0;
-    for (auto& date : dates) {
-        len += date.length();
-    }
-    
-    double compressedLen = 0;
-    double frequentCompressedLen = 0;
-    for (int i = 0; i < 10; i++) {
-        auto t1 = high_resolution_clock::now();
-        double compressed = GoKrimp::Compress(dates);
-        auto t2 = high_resolution_clock::now();
-        double frequentCompressed = compressor.Compress(dates, 100, 5).size();
-        auto t3 = high_resolution_clock::now();
-        duration1 += duration_cast<microseconds>(t2 - t1).count();
-        duration2 += duration_cast<microseconds>(t3 - t2).count();
-        compressedLen += compressed;
-        frequentCompressedLen += frequentCompressed;
-    }
-    len *= 10;
-    
-    cout << "Time for GoKrimp:" << duration1 / 1000.0 << endl;
-    cout << "Time for PrefixSpan:" << duration2 / 1000.0 << endl;
-    
-    cout << "Compression ratio for GoKrimp:" << compressedLen / len << endl;
-    cout << "Compression ratio for Frequent:" << frequentCompressedLen / len << endl;
-    //sort(patterns.begin(), patterns.end());
-    //REQUIRE((patterns == vector<string> {"1", "23", "234", "5"}));
-}
+//TEST_CASE( "GoKrimp compression test"
+//          , "[GoKrimp]" ) {
+//    GoKrimp goKrimp;
+//    FrequentPatternCompressor compressor;
+//    auto dates = random_dates(10000);
+//    long duration1 = 0;
+//    long duration2 = 0;
+//    
+//    long len = 0;
+//    for (auto& date : dates) {
+//        len += date.length();
+//    }
+//    
+//    double compressedLen = 0;
+//    double frequentCompressedLen = 0;
+//    for (int i = 0; i < 10; i++) {
+//        auto t1 = high_resolution_clock::now();
+//        double compressed = GoKrimp::Compress(dates);
+//        auto t2 = high_resolution_clock::now();
+//        double frequentCompressed = compressor.Compress(dates, 100, 5).size();
+//        auto t3 = high_resolution_clock::now();
+//        duration1 += duration_cast<microseconds>(t2 - t1).count();
+//        duration2 += duration_cast<microseconds>(t3 - t2).count();
+//        compressedLen += compressed;
+//        frequentCompressedLen += frequentCompressed;
+//    }
+//    len *= 10;
+//    
+//    cout << "Time for GoKrimp:" << duration1 / 1000.0 << endl;
+//    cout << "Time for PrefixSpan:" << duration2 / 1000.0 << endl;
+//    
+//    cout << "Compression ratio for GoKrimp:" << compressedLen / len << endl;
+//    cout << "Compression ratio for Frequent:" << frequentCompressedLen / len << endl;
+//    //sort(patterns.begin(), patterns.end());
+//    //REQUIRE((patterns == vector<string> {"1", "23", "234", "5"}));
+//}

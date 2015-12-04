@@ -41,14 +41,25 @@ TEST_CASE( "Some test with libart"
     }
     
     // Search for each line
-    line = 1;
     for (auto& str : strings) {
         len = str.length();
         
-        uintptr_t val = (uintptr_t)art_search(&t, (unsigned char*)&str[0], len);
-        REQUIRE(val == line);
-        line++;
+        int match_len = art_match_len(&t, (unsigned char*)&str[0], len);
+        REQUIRE(match_len == len);
     }
+    
+    string str = "167";
+    int match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    REQUIRE(match_len == 1);
+    
+    str = "2367";
+    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    REQUIRE(match_len == 2);
+    
+    str = "023469";
+    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    REQUIRE(match_len == 5);
+    
     res = art_tree_destroy(&t);
 }
 

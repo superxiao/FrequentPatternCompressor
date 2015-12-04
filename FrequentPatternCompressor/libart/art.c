@@ -214,6 +214,14 @@ static int leaf_matches(const art_leaf *n, const unsigned char *key, int key_len
     return memcmp(n->key, key, key_len);
 }
 
+static leaf_match_len(const art_leaf *n, const unsigned char *key, int key_len, int depth) {
+    for (int idx=0; idx < key_len; idx++) {
+        if (n->key[idx] != key[idx])
+            return idx;
+    }
+    return key_len;
+}
+
 /**
  * Searches for a value in the ART tree
  * @arg t The tree
@@ -252,6 +260,35 @@ void* art_search(const art_tree *t, const unsigned char *key, int key_len) {
     }
     return NULL;
 }
+
+int art_match_len(const art_tree *t, const unsigned char *key, int key_len) {
+    art_node **child;
+    art_node *n = t->root;
+    int prefix_len, depth = 0;
+    while (n) {
+        // Might be a leaf
+        if (IS_LEAF(n)) {
+            n = LEAF_RAW(n);
+            // Check if the expanded path matches
+            return leaf_match_len((art_leaf*)n, key, key_len, depth);
+        }
+        
+        // Bail if the prefix does not match
+        if (n->partial_len) {
+            prefix_len = check_prefix(n, key, key_len, depth);
+            if (prefix_len != min(MAX_PREFIX_LEN, n->partial_len))
+                return prefix_len + depth;
+            depth = depth + n->partial_len;
+        }
+        
+        // Recursively search
+        child = find_child(n, key[depth]);
+        n = (child) ? *child : NULL;
+        depth++;
+    }
+    return 0;
+}
+
 
 // Find the minimum leaf under a node
 static art_leaf* minimum(const art_node *n) {
