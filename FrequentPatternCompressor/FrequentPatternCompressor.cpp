@@ -147,16 +147,18 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
 
 void FrequentPatternCompressor::ForwardCoverWithART(const string& str, art_tree* t){
     int pos = 0;
-    int index = patterns.size();
     while (pos < str.length()) {
+        
+        int index = patterns.size();
         int match_len = art_match_len(t, (unsigned char*)&str[pos],
                                       str.length() - pos, &index);
         if (index - patterns.size() == 1) {
             patterns.push_back(str.substr(pos, match_len));
-            indices[indexEnd] = index - 1;
+            indices[indexEnd++] = index - 1;
         } else {
             indices[indexEnd++] =index;
         }
+        pos += match_len;
     }
 }
 
@@ -182,7 +184,11 @@ string FrequentPatternCompressor::CompressWithART(const vector<string>& strings,
         sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
         //sample[i] = strings[i];
     }
-    art_tree* t = PrefixSpanWithART::GetFrequentPatterns(strings, support);
+    
+    art_tree t;
+    int res = art_tree_init(&t);
+    
+    PrefixSpanWithART::GetFrequentPatterns(sample, support, &t);
     patterns.clear();
     patterns.reserve(strings.size() + 256);
     
@@ -190,8 +196,10 @@ string FrequentPatternCompressor::CompressWithART(const vector<string>& strings,
     // should be optimized away with load/store.
     uint64_t uncompressed_size = 0;
     
+    patterns.push_back("0");
+    
     for (const string& s : strings) {
-        ForwardCoverWithART(s, t);
+        ForwardCoverWithART(s, &t);
         uncompressed_size += s.length();
     }
     
@@ -247,6 +255,6 @@ string FrequentPatternCompressor::CompressWithART(const vector<string>& strings,
                 compressedSize);
     
     string result(out, outEnd + compressedSize * 4);
-    art_tree_destroy(t);
+    art_tree_destroy(&t);
     return result;
 }

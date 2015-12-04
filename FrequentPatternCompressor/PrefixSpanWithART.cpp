@@ -14,8 +14,10 @@ vector<uint8_t> ls2;
 
 void PrefixSpanWithART::DepthFirstSearchForFrequentPatterns(Trie* tree, art_tree* t, int prefixLen,
                                                      const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
-    //if(prefixLen > 4)
-    //    return;
+    if(prefixLen > 18) {
+        art_insert(t, (unsigned char*)&tree->currNode->str[0], tree->currNode->str.length(), NULL);
+        return;
+    }
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
@@ -52,13 +54,11 @@ void PrefixSpanWithART::DepthFirstSearchForFrequentPatterns(Trie* tree, art_tree
     }
 }
 
-art_tree* PrefixSpanWithART::GetFrequentPatterns(const vector<string>& strings, int minSupport) {
+void PrefixSpanWithART::GetFrequentPatterns(const vector<string>& strings, int minSupport, art_tree* t) {
     Trie* tree = BuildTreeWithCharFrequencies(strings, minSupport);
-    
-    art_tree t;
-    int res = art_tree_init(&t);
+ 
     for (int c = 0; c < 256; c++) {
-        art_insert(&t, (unsigned char*)&c, 1, NULL);
+        art_insert(t, (unsigned char*)&c, 1, NULL);
     }
     
     // bug
@@ -69,11 +69,10 @@ art_tree* PrefixSpanWithART::GetFrequentPatterns(const vector<string>& strings, 
         }
         Node* currNode = tree->currNode;
         tree->currNode = children[i];
-        DepthFirstSearchForFrequentPatterns(tree, &t, 1, tree->currNode->patternPositions,
+        DepthFirstSearchForFrequentPatterns(tree, t, 1, tree->currNode->patternPositions,
                                             strings, minSupport);
         tree->currNode = currNode;
     }
     
     delete tree;
-    return &t;
 }

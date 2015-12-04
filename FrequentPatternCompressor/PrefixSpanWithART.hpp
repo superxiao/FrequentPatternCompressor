@@ -20,7 +20,7 @@ using namespace std;
 class PrefixSpanWithART {
     
 public:
-    static art_tree* GetFrequentPatterns(const vector<string>& strings, int minSupport);
+    static void GetFrequentPatterns(const vector<string>& strings, int minSupport, art_tree* t);
     
 private:
     static void DepthFirstSearchForFrequentPatterns(Trie* tree, art_tree* t, int prefixLen,

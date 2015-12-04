@@ -23,8 +23,8 @@
 using namespace std;
 using namespace std::chrono;
 
-//static const int LINES_PER_BLOCK = 100000;
-static const int LINES_PER_BLOCK = 10000;
+static const int LINES_PER_BLOCK = 100000;
+//static const int LINES_PER_BLOCK = 10000;
 static const int BLOCK_NUM = 10;
 static const bool PRINT_STATS = true;
 static const int REPEAT = 1;
@@ -152,8 +152,8 @@ cstat compress_file_frequent(string file, int sample_size = 100, int support = 5
     for (int j = 0; j < REPEAT; j++) {
         ifstream s(file);
         int blocks = 0;
-        //while(!s.eof()) {
-        while (blocks++ < BLOCK_NUM) {
+        while(!s.eof()) {
+        //while (blocks++ < BLOCK_NUM) {
             int i = 0;
             vector<string> strings;
             for (string line; getline(s, line);) {
@@ -177,7 +177,7 @@ cstat compress_file_frequent(string file, int sample_size = 100, int support = 5
             duration += duration_cast<microseconds>( t2 - t1 ).count();
             
             t1 = high_resolution_clock::now();
-            auto decompressed = decompress_frequent(compressed);
+            //auto decompressed = decompress_frequent(compressed);
             t2 = high_resolution_clock::now();
             decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
         }
@@ -370,39 +370,39 @@ void compress_file_frequent_varying(string file, int repeat = 1){
     }
 }
 //
-//int main(int argc, const char * argv[]) {
-//    vector<string> infiles = {
-////        "gen-address",
-////        "gen-name",
-////        "gen-iso8601",
-////        "gen-uri",
-////        "gen-email",
-//        "gen-user_agent",
-////        "gen-credit_card_number",
-////        "gen-credit_card_full",
-////        "gen-sha1",
-//        "gen-text",
-////        "gen-phone_number"
-//        
-//    };
-//    
-//    for(int j = 0; j < 1; j++) {
-//        cout << "iteration " << j << ":" << endl;
-//        for (string& file : infiles) {
-//            cout << "Benchmarking " << file << endl;
-////            auto f_stat = compress_file_frequent(indir + file + ".txt");
-//            auto g_stat = compress_file_gokrimp(indir + file + ".txt");
-////            auto gs_stat = compress_file_gokrimp_sample(indir + file + ".txt");
-////            append_stat(gokrimp_out+"frequent_depth4_"+file+".txt", f_stat);
-////            append_stat(gokrimp_out+"frequent_"+file+".txt", f_stat);
-////            append_stat(gokrimp_out+"gokrimp_"+file+".txt", g_stat);
-////            append_stat(gokrimp_out+"gokrimp_frequent_"+file+".txt", gs_stat);
-//            
-//            //append_stat(outdir + "frequent_depth4_" + file + ".txt", f_stat);
-////            auto s_stat = compress_file_snappy(indir + file + ".txt");
-////            append_stat(gokrimp_out + "snappy_" + file + ".txt", s_stat);
-////            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
-////            compress_file_frequent_varying(file, 1);
-//        }
-//    }
-//}
+int main(int argc, const char * argv[]) {
+    vector<string> infiles = {
+        "gen-address",
+//        "gen-name",
+//        "gen-iso8601",
+//        "gen-uri",
+//        "gen-email",
+        "gen-user_agent",
+//        "gen-credit_card_number",
+//        "gen-credit_card_full",
+//        "gen-sha1",
+        "gen-text",
+//        "gen-phone_number"
+        
+    };
+    
+    for(int j = 0; j < 1; j++) {
+        cout << "iteration " << j << ":" << endl;
+        for (string& file : infiles) {
+            cout << "Benchmarking " << file << endl;
+            auto f_stat = compress_file_frequent(indir + file + ".txt");
+            //auto g_stat = compress_file_gokrimp(indir + file + ".txt");
+//            auto gs_stat = compress_file_gokrimp_sample(indir + file + ".txt");
+//            append_stat(gokrimp_out+"frequent_depth4_"+file+".txt", f_stat);
+//            append_stat(gokrimp_out+"frequent_"+file+".txt", f_stat);
+//            append_stat(gokrimp_out+"gokrimp_"+file+".txt", g_stat);
+//            append_stat(gokrimp_out+"gokrimp_frequent_"+file+".txt", gs_stat);
+            
+            //append_stat(outdir + "frequent_depth4_" + file + ".txt", f_stat);
+//            auto s_stat = compress_file_snappy(indir + file + ".txt");
+//            append_stat(gokrimp_out + "snappy_" + file + ".txt", s_stat);
+//            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+//            compress_file_frequent_varying(file, 1);
+        }
+    }
+}

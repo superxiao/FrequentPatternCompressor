@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 
-//#define CATCH_CONFIG_RUNNER
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
+//#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "Utils.hpp"
 #include "FrequentPatternCompressor.hpp"

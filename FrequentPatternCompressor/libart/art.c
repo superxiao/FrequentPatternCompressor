@@ -36,6 +36,9 @@ static art_node* alloc_node(uint8_t type) {
             abort();
     }
     n->type = type;
+    for (int i = 0; i < MAX_PREFIX_LEN; i++) {
+        n->indices[i] = 0;
+    }
     return n;
 }
 
@@ -215,9 +218,9 @@ static int leaf_matches(const art_leaf *n, const unsigned char *key, int key_len
 }
 
 static int leaf_match_len(art_leaf *n, const unsigned char *key, int key_len, int depth, int* next_index) {
-    for (int idx=0; idx < key_len; idx++) {
+    for (int idx=0; idx < 20; idx++) {
         if (n->key[idx] != key[idx]) {
-            if (n->indices[idx] == -1) {
+            if (n->indices[idx] == 0) {
                 n->indices[idx] = *next_index;
                 (*next_index)++;
             } else {
@@ -226,6 +229,14 @@ static int leaf_match_len(art_leaf *n, const unsigned char *key, int key_len, in
             return idx;
         }
     }
+    
+    if (n->indices[19] == 0) {
+        n->indices[19] = *next_index;
+        (*next_index)++;
+    } else {
+        *next_index = n->indices[19];
+    }
+    
     return key_len;
 }
 
@@ -285,13 +296,12 @@ int art_match_len(const art_tree *t, const unsigned char *key, int key_len, int*
             prefix_len = check_prefix(n, key, key_len, depth);
             if (prefix_len != min(MAX_PREFIX_LEN, n->partial_len)) {
                 
-                if (n->indices[prefix_len] == -1) {
+                if (n->indices[prefix_len] == 0) {
                     n->indices[prefix_len] = *next_index;
                     (*next_index)++;
                 } else {
                     *next_index = n->indices[prefix_len];
                 }
-                
                 return prefix_len + depth;
             }
             depth = depth + n->partial_len;
@@ -299,6 +309,16 @@ int art_match_len(const art_tree *t, const unsigned char *key, int key_len, int*
         
         // Recursively search
         child = find_child(n, key[depth]);
+        if(child == NULL) {
+            
+            if (n->indices[MAX_PREFIX_LEN-1] == 0) {
+                n->indices[MAX_PREFIX_LEN-1] = *next_index;
+                (*next_index)++;
+            } else {
+                *next_index = n->indices[MAX_PREFIX_LEN-1];
+            }
+            return min(MAX_PREFIX_LEN, n->partial_len) + depth;
+        }
         n = (child) ? *child : NULL;
         depth++;
     }
@@ -377,6 +397,9 @@ static art_leaf* make_leaf(const unsigned char *key, int key_len, void *value) {
     l->value = value;
     l->key_len = key_len;
     memcpy(l->key, key, key_len);
+    for (int i = 0; i < 20; i++) {
+        l->indices[i] = 0;
+    }
     return l;
 }
 
