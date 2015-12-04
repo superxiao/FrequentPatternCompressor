@@ -35,6 +35,7 @@ typedef struct {
     uint8_t num_children;
     uint32_t partial_len;
     unsigned char partial[MAX_PREFIX_LEN];
+    int32_t indices[MAX_PREFIX_LEN];
 } art_node;
 
 /**
@@ -80,7 +81,8 @@ typedef struct {
 typedef struct {
     void *value;
     uint32_t key_len;
-    unsigned char key[];
+    unsigned char key[20];
+    int32_t indices[20];
 } art_leaf;
 
 /**
@@ -139,7 +141,7 @@ inline uint64_t art_size(art_tree *t) {
  */
 void* art_insert(art_tree *t, const unsigned char *key, int key_len, void *value);
 
-int art_match_len(const art_tree *t, const unsigned char *key, int key_len);
+int art_match_len(const art_tree *t, const unsigned char *key, int key_len, int* next_index);
 
 /**
  * Deletes a value from the ART tree

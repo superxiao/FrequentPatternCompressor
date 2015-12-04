@@ -214,10 +214,17 @@ static int leaf_matches(const art_leaf *n, const unsigned char *key, int key_len
     return memcmp(n->key, key, key_len);
 }
 
-static leaf_match_len(const art_leaf *n, const unsigned char *key, int key_len, int depth) {
+static int leaf_match_len(art_leaf *n, const unsigned char *key, int key_len, int depth, int* next_index) {
     for (int idx=0; idx < key_len; idx++) {
-        if (n->key[idx] != key[idx])
+        if (n->key[idx] != key[idx]) {
+            if (n->indices[idx] == -1) {
+                n->indices[idx] = *next_index;
+                (*next_index)++;
+            } else {
+                *next_index = n->indices[idx];
+            }
             return idx;
+        }
     }
     return key_len;
 }
@@ -261,7 +268,7 @@ void* art_search(const art_tree *t, const unsigned char *key, int key_len) {
     return NULL;
 }
 
-int art_match_len(const art_tree *t, const unsigned char *key, int key_len) {
+int art_match_len(const art_tree *t, const unsigned char *key, int key_len, int* next_index) {
     art_node **child;
     art_node *n = t->root;
     int prefix_len, depth = 0;
@@ -270,14 +277,23 @@ int art_match_len(const art_tree *t, const unsigned char *key, int key_len) {
         if (IS_LEAF(n)) {
             n = LEAF_RAW(n);
             // Check if the expanded path matches
-            return leaf_match_len((art_leaf*)n, key, key_len, depth);
+            return leaf_match_len((art_leaf*)n, key, key_len, depth, next_index);
         }
         
         // Bail if the prefix does not match
         if (n->partial_len) {
             prefix_len = check_prefix(n, key, key_len, depth);
-            if (prefix_len != min(MAX_PREFIX_LEN, n->partial_len))
+            if (prefix_len != min(MAX_PREFIX_LEN, n->partial_len)) {
+                
+                if (n->indices[prefix_len] == -1) {
+                    n->indices[prefix_len] = *next_index;
+                    (*next_index)++;
+                } else {
+                    *next_index = n->indices[prefix_len];
+                }
+                
                 return prefix_len + depth;
+            }
             depth = depth + n->partial_len;
         }
         

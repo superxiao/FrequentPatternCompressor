@@ -39,25 +39,25 @@ TEST_CASE( "Some test with libart"
         art_insert(&t, (unsigned char*)&str[0], len, (void*)line);
         line++;
     }
-    
+    int i1;
     // Search for each line
     for (auto& str : strings) {
         len = str.length();
         
-        int match_len = art_match_len(&t, (unsigned char*)&str[0], len);
+        int match_len = art_match_len(&t, (unsigned char*)&str[0], len, &i1);
         REQUIRE(match_len == len);
     }
     
     string str = "167";
-    int match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    int match_len = art_match_len(&t, (unsigned char*)&str[0], str.length(), &i1);
     REQUIRE(match_len == 1);
     
     str = "2367";
-    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length(), &i1);
     REQUIRE(match_len == 2);
     
     str = "023469";
-    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length());
+    match_len = art_match_len(&t, (unsigned char*)&str[0], str.length(), &i1);
     REQUIRE(match_len == 5);
     
     res = art_tree_destroy(&t);

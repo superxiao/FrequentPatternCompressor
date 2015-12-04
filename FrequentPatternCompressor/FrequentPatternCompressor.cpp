@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstring>
 #include "PrefixSpan.hpp"
+#include "PrefixSpanWithART.hpp"
 #include <iostream>
 #include "Utils.hpp"
 #include "GoKrimp.hpp"
@@ -144,6 +145,21 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     UseCurrentPattern(currNode);
 }
 
+void FrequentPatternCompressor::ForwardCoverWithART(const string& str, art_tree* t){
+    int pos = 0;
+    int index = patterns.size();
+    while (pos < str.length()) {
+        int match_len = art_match_len(t, (unsigned char*)&str[pos],
+                                      str.length() - pos, &index);
+        if (index - patterns.size() == 1) {
+            patterns.push_back(str.substr(pos, match_len));
+            indices[indexEnd] = index - 1;
+        } else {
+            indices[indexEnd++] =index;
+        }
+    }
+}
+
 void FrequentPatternCompressor::UseCurrentPattern(Node* node) {
     auto& index = node->index;
     if (index == -1) {
@@ -153,4 +169,84 @@ void FrequentPatternCompressor::UseCurrentPattern(Node* node) {
     //trie->IncrementUsage();
     indices[indexEnd++] =index;
     
+}
+
+string FrequentPatternCompressor::CompressWithART(const vector<string>& strings, int sample_size, int support,
+                                           bool use_gokrimp) {
+    indexEnd = 0;
+    sample_size = min(sample_size, (int)strings.size());
+    vector<string> sample(sample_size);
+    srand((unsigned)time(NULL));
+    
+    for (size_t i = 0; i < sample_size; i++) {
+        sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
+        //sample[i] = strings[i];
+    }
+    art_tree* t = PrefixSpanWithART::GetFrequentPatterns(strings, support);
+    patterns.clear();
+    patterns.reserve(strings.size() + 256);
+    
+    // Using 32 bit here will cause later copying to be slower. But that
+    // should be optimized away with load/store.
+    uint64_t uncompressed_size = 0;
+    
+    for (const string& s : strings) {
+        ForwardCoverWithART(s, t);
+        uncompressed_size += s.length();
+    }
+    
+    outEnd = 0;
+    memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
+    outEnd += sizeof(uncompressed_size);
+    
+    uint32_t numStrings = (uint32_t)strings.size();
+    memcpy(out + outEnd, &numStrings, sizeof(numStrings));
+    outEnd += sizeof(numStrings);
+    
+    for(auto &pattern : patterns) {
+        uint16_t length = pattern.length();
+        memcpy(out + outEnd, &length, 2);
+        outEnd += 2;
+        memcpy(out + outEnd, pattern.c_str(), pattern.length());
+        outEnd += pattern.length();
+    }
+    
+    out[outEnd++] = 0;
+    out[outEnd++] = 0;
+    
+    vector<uint32_t> lens;
+    
+    size_t compressedSize = 2 * strings.size();
+    
+    for(auto& str : strings) {
+        lens.push_back((uint32_t)str.size());
+    }
+    
+    auto lenSizeField = reinterpret_cast<uint32_t*>(out + outEnd);
+    
+    outEnd += 4;
+    
+    if (outEnd % 16 != 0){
+        outEnd += 16 - outEnd % 16;
+    }
+    
+    encodeArray(lens.data(),
+                strings.size(),
+                reinterpret_cast<uint32_t*>(out + outEnd),
+                compressedSize);
+    
+    *lenSizeField = (uint32_t)compressedSize;
+    
+    outEnd += compressedSize * 4;
+    
+    compressedSize = 2 * indexEnd;
+    
+    encodeArray(reinterpret_cast<uint32_t*>(indices),
+                indexEnd,
+                reinterpret_cast<uint32_t*>(out + outEnd),
+                compressedSize);
+    
+    string result(out, outEnd + compressedSize * 4);
+    art_tree_destroy(t);
+    return result;
 }
