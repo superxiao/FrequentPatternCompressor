@@ -18,6 +18,8 @@
 		D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62C1BD1956200249E13 /* Trie.cpp */; };
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; };
 		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; };
+		D869892B1C1110F4004F1FA7 /* TestLibART.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D869892A1C1110F4004F1FA7 /* TestLibART.cpp */; };
+		D869892E1C111465004F1FA7 /* art.c in Sources */ = {isa = PBXBuildFile; fileRef = D869892C1C111465004F1FA7 /* art.c */; };
 		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; };
 		D8ABE61A1BF672C3001D9C20 /* GoKrimp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
@@ -57,6 +59,9 @@
 		D85FC2E91BD8415F0058CD6D /* snappy */ = {isa = PBXFileReference; lastKnownFileType = folder; path = snappy; sourceTree = "<group>"; };
 		D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnappyCompressor.cpp; sourceTree = "<group>"; };
 		D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SnappyCompressor.hpp; sourceTree = "<group>"; };
+		D869892A1C1110F4004F1FA7 /* TestLibART.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestLibART.cpp; sourceTree = "<group>"; };
+		D869892C1C111465004F1FA7 /* art.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = art.c; path = libart/art.c; sourceTree = "<group>"; };
+		D869892D1C111465004F1FA7 /* art.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = art.h; path = libart/art.h; sourceTree = "<group>"; };
 		D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequentPatternDecompressor.cpp; sourceTree = "<group>"; };
 		D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternDecompressor.hpp; sourceTree = "<group>"; };
 		D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GoKrimp.cpp; sourceTree = "<group>"; };
@@ -102,6 +107,9 @@
 		D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */ = {
 			isa = PBXGroup;
 			children = (
+				D869892C1C111465004F1FA7 /* art.c */,
+				D869892D1C111465004F1FA7 /* art.h */,
+				D869892A1C1110F4004F1FA7 /* TestLibART.cpp */,
 				D80D281E1C039EA000368523 /* TestGoKrimp.cpp */,
 				D8ABE6161BF672C2001D9C20 /* GoKrimp.cpp */,
 				D8ABE6171BF672C3001D9C20 /* GoKrimp.hpp */,
@@ -198,7 +206,9 @@
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
 				D80469A51BD33474006AD5D9 /* PrefixSpan.cpp in Sources */,
+				D869892E1C111465004F1FA7 /* art.c in Sources */,
 				D80CFEE41BD6DBD800121CA8 /* TestTrie.cpp in Sources */,
+				D869892B1C1110F4004F1FA7 /* TestLibART.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

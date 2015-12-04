@@ -161,9 +161,9 @@ Trie* GoKrimp::GetCompressingPatternsTrie(const vector<string> &strings, int k, 
     return trie;
 }
 
-double GoKrimp::Compress(const vector<string> &strings) {
+double GoKrimp::Compress(const vector<string> &strings, int patternNum) {
     vector<int> freqs;
-    auto patterns = GetCompressingPatterns(strings, 200, freqs);
+    auto patterns = GetCompressingPatterns(strings, patternNum, freqs);
 
     double compressedSize = 0;
    

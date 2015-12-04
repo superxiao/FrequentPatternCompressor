@@ -42,7 +42,8 @@ void CompareTrie(Node* trie1, Node* trie2) {
     }
 }
 
-string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
+string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support,
+                                           bool use_gokrimp) {
     indexEnd = 0;
     sample_size = min(sample_size, (int)strings.size());
     vector<string> sample(sample_size);
@@ -52,10 +53,13 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
         //sample[i] = strings[i];
     }
-    
-    //Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
-    vector<int> freqs;
-    Trie* trie = GoKrimp::GetCompressingPatternsTrie(sample, 1000, freqs);
+    Trie* trie = nullptr;
+    if(use_gokrimp) {
+        vector<int> freqs;
+        trie = GoKrimp::GetCompressingPatternsTrie(sample, 200, freqs);
+    } else {
+        trie = PrefixSpan::GetFrequentPatterns(sample, support);
+    }
     patterns.clear();
     patterns.reserve(strings.size() + 256);
     
