@@ -24,12 +24,13 @@ struct Position {
 struct Node {
     
     ~Node();
-    
-    Node* children[256] {NULL}; // Optimization using pointer?
     list<Node*> frequentChildren;
-    int index = -1;
+    int index = 0;
     string str;
+    vector<int32_t> indices;
     vector<Position> patternPositions;
+    uint8_t depth;
+    Node* children[256] {NULL}; // Optimization using pointer?
 };
 
 #endif /* Node_hpp */

@@ -12,6 +12,7 @@
 
 Trie::Trie(){
     this->root = new Node();
+    this->root->depth = -1;
     this->currNode = this->root;
 }
 

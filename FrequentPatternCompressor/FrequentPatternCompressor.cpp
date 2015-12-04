@@ -16,6 +16,7 @@
 #include "Utils.hpp"
 
 using namespace std::chrono;
+using namespace std;
 
 char out[10 * 1024 * 1024];
 int indexEnd = 0;
@@ -55,6 +56,7 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
     
     patterns.reserve(strings.size() + 256);
+    patterns.push_back("0");
     
     // Using 32 bit here will cause later copying to be slower. But that
     // should be optimized away with load/store.
@@ -125,13 +127,27 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;
-    for(uint8_t c : string) {
-        Node* child = currNode->children[c];
+    int counter = 0;
+    auto c = string.begin();
+    while(c != string.end()) {
+        Node* child = currNode->children[*c];
         if (child) {
             currNode = child;
+            c++;
+            for (int i = child->depth + 1; i < child->str.length(); i++) {
+                if (c == string.end()) {
+                    break;
+                }
+                if (child->str[i] != *c) {
+                    UseCurrentPattern(currNode, i);
+                    currNode = root;
+                    break;
+                }
+                c++;
+            }
         } else {
             UseCurrentPattern(currNode);
-            currNode = root->children[c];
+            currNode = root;
         }
     }
     UseCurrentPattern(currNode);
@@ -139,9 +155,20 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
 
 void FrequentPatternCompressor::UseCurrentPattern(Node* node) {
     auto& index = node->index;
-    if (index == -1) {
+    if (index == 0) {
         index = (int)patterns.size();
         patterns.push_back(node->str);
+    }
+    //trie->IncrementUsage();
+    indices[indexEnd++] =index;
+    
+}
+
+void FrequentPatternCompressor::UseCurrentPattern(Node* node, int i) {
+    auto& index = node->indices[i];
+    if (index == 0) {
+        index = (int)patterns.size();
+        patterns.push_back(node->str.substr(0, i));
     }
     //trie->IncrementUsage();
     indices[indexEnd++] =index;

@@ -22,6 +22,8 @@ private:
     
     inline void UseCurrentPattern(Node* node);
     
+    inline void UseCurrentPattern(Node* node, int i);
+    
     void AppendPackedLengths(const vector<string>& strings);
     void AppendPackedIntegers(int* integers, int size, int bitsPerInt);
 
