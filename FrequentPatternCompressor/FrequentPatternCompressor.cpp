@@ -19,7 +19,7 @@ using namespace std::chrono;
 
 char out[10 * 1024 * 1024];
 int indexEnd = 0;
-int32_t indices[10*1024*1024]; // Dynamic or static no difference
+int32_t indices[50*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 void CompareTrie(Node* trie1, Node* trie2) {

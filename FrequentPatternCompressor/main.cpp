@@ -75,7 +75,7 @@ inline void print_stat(long compressed_size, long original_size,
         cout << "Original Size:\t\t" << original_size / 1024.0 / 1024 << " MB" << endl;
         cout << "Compressed Size:\t" << compressed_size / 1024.0 / 1024 << " MB" << endl;
         cout << "Compression Time:\t" << compression_time / 1000.0 << " ms" << endl;
-        cout << "Compression Time:\t" << decompression_time / 1000.0 << " ms" << endl;
+        cout << "Decompression Time:\t" << decompression_time / 1000.0 << " ms" << endl;
     }
 }
 

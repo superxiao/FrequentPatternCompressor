@@ -10,7 +10,7 @@
 #include <iostream>
 #include "Utils.hpp"
 
-uint32_t integers[10 * 1024 * 1024];
+uint32_t integers[50 * 1024 * 1024];
 
 string FrequentPatternDecompressor::Decompress(const string& compressed, vector<uint32_t>& outLens) {
     const uint8_t* begin = reinterpret_cast<const uint8_t*>(compressed.c_str());
