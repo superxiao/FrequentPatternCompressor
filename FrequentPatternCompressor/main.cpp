@@ -23,7 +23,7 @@ using namespace std;
 using namespace std::chrono;
 
 static const int LINES_PER_BLOCK = 100000;
-static const bool PRINT_STATS = false;
+static const bool PRINT_STATS = true;
 static const int REPEAT = 1;
 
 struct cstat {
@@ -285,12 +285,12 @@ int main(int argc, const char * argv[]) {
         
     };
     
-    for(int j = 0; j < 15; j++) {
+    for(int j = 0; j < 1; j++) {
         cout << "iteration " << j << ":" << endl;
         for (string& file : infiles) {
             cout << "Benchmarking " << file << endl;
             auto f_stat = compress_file_frequent(indir + file + ".txt");
-            append_stat(outdir + "frequent_depth4_" + file + ".txt", f_stat);
+            //append_stat(outdir + "frequent_depth4_" + file + ".txt", f_stat);
 //            auto s_stat = compress_file_snappy(indir + file + ".txt");
 //            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
 //            compress_file_frequent_varying(file, 1);
