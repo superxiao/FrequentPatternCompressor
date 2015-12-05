@@ -127,19 +127,20 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;
-    int counter = 0;
     auto c = string.begin();
     while(c != string.end()) {
         Node* child = currNode->children[*c];
         if (child) {
             currNode = child;
             c++;
-            for (int i = child->depth + 1; i < child->str.length(); i++) {
+            int clen = child->partialLen;
+            for (int i = 1; i != clen; i++) {
                 if (c == string.end()) {
-                    break;
+                    UseCurrentPattern(currNode, i + currNode->depth);
+                    return;
                 }
-                if (child->str[i] != *c) {
-                    UseCurrentPattern(currNode, i);
+                if (child->partial[i] != *c) {
+                    UseCurrentPattern(currNode, i + currNode->depth);
                     currNode = root;
                     break;
                 }
@@ -168,7 +169,7 @@ void FrequentPatternCompressor::UseCurrentPattern(Node* node, int i) {
     auto& index = node->indices[i];
     if (index == 0) {
         index = (int)patterns.size();
-        patterns.push_back(node->str.substr(0, i));
+        patterns.emplace_back(node->str.begin(), node->str.begin() + i);
     }
     //trie->IncrementUsage();
     indices[indexEnd++] =index;

@@ -55,6 +55,8 @@ public:
         currNode->children[c] = newChild;
         currNode->frequentChildren.push_back(newChild);
         newChild->str = currNode->str + (char)c;
+        newChild->partial = (char)c;
+        newChild->partialLen = 1;
         newChild->indices.resize(newChild->str.length());
         newChild->patternPositions = *positions;
         newChild->depth = currNode->str.length();

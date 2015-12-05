@@ -44,6 +44,8 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
     
     if (ls.size() == 1) {
         tree->currNode->str += ls.back();
+        tree->currNode->partial += ls.back();
+        tree->currNode->partialLen++;
         tree->currNode->indices.resize(tree->currNode->indices.size() + 1);
         tree->currNode->patternPositions = projected[ls.back()];
         projected[ls.back()].clear();
