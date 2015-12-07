@@ -137,7 +137,8 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
         Node* child = currNode->children[*c];
         if (!child) {
             UseCurrentPattern(currNode);
-            currNode = root;
+            currNode = root->children[*c];
+            c++;
             continue;
         }
         currNode = child;
@@ -148,7 +149,8 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
         child = currNode->children[*c];
         if (!child) {
             UseCurrentPattern(currNode);
-            currNode = root;
+            currNode = root->children[*c];
+            c++;
             continue;
         }
         currNode = child;
@@ -159,7 +161,8 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
         child = currNode->children[*c];
         if (!child) {
             UseCurrentPattern(currNode);
-            currNode = root;
+            currNode = root->children[*c];
+            c++;
             continue;
         }
         currNode = child;
@@ -170,18 +173,8 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
         child = currNode->children[*c];
         if (!child) {
             UseCurrentPattern(currNode);
-            currNode = root;
-            continue;
-        }
-        currNode = child;
-        if (++c == end) {
-            break;
-        }
-        
-        child = currNode->children[*c];
-        if (!child) {
-            UseCurrentPattern(currNode);
-            currNode = root;
+            currNode = root->children[*c];
+            c++;
             continue;
         }
         currNode = child;
