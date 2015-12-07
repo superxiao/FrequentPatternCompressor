@@ -12,10 +12,46 @@
 vector<Position> projected[256];
 vector<uint8_t> ls;
 
-void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
+void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int prefixLen,
                                                      const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
-    //if(prefixLen > 4)
-    //    return;
+    for(size_t i = 0; i < prefixPositions.size(); i++)
+    {
+        Position prefixPos = prefixPositions[i];
+        const string& str = strings[prefixPos.stringIndex];
+        size_t nextCharPos = prefixPos.positionInString + prefixLen;
+        if (nextCharPos < str.length()) {
+            uint8_t c = str[nextCharPos]; // TODO better way?
+            projected[c].push_back(prefixPos);
+            if (projected[c].size() == 1) {
+                ls.push_back(c);
+            }
+        }
+    }
+    for(auto poss : ls) {
+        auto& vec = projected[poss];
+        if (vec.size() >= minSupport) {
+            tree->AddChildNode(poss, &vec);
+        }
+        vec.clear();
+    }
+    ls.clear();
+    auto& children = tree->currNode->frequentChildren;
+    Node* currNode = tree->currNode;
+    for (auto itr = children.begin(); itr != children.end(); itr++) {
+        tree->currNode = *itr;
+        if (prefixLen <= 4) {
+            DepthFirstSearchForFrequentPatternsShallow(tree, prefixLen + 1,
+                                            tree->currNode->patternPositions, strings, minSupport);
+        }
+        else {
+            DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1, tree->currNode->patternPositions, strings, minSupport);
+        }
+        tree->currNode = currNode;
+    }
+}
+
+void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixLen,
+                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
@@ -50,7 +86,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
         tree->currNode->patternPositions = projected[ls.back()];
         projected[ls.back()].clear();
         ls.clear();
-        DepthFirstSearchForFrequentPatterns(tree, prefixLen + 1,
+        DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1,
                                             tree->currNode->patternPositions, strings, minSupport);
         return;
     }
@@ -66,7 +102,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
     Node* currNode = tree->currNode;
     for (auto itr = children.begin(); itr != children.end(); itr++) {
         tree->currNode = *itr;
-        DepthFirstSearchForFrequentPatterns(tree, prefixLen + 1,
+        DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1,
                                             tree->currNode->patternPositions, strings, minSupport);
         tree->currNode = currNode;
     }
@@ -82,7 +118,7 @@ Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupp
         }
         Node* currNode = tree->currNode;
         tree->currNode = children[i];
-        DepthFirstSearchForFrequentPatterns(tree, 1, tree->currNode->patternPositions,
+        DepthFirstSearchForFrequentPatternsShallow(tree, 1, tree->currNode->patternPositions,
                                             strings, minSupport);
         tree->currNode = currNode;
     }

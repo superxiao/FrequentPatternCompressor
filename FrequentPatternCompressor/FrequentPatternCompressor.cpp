@@ -14,6 +14,7 @@
 #include "PrefixSpan.hpp"
 #include <iostream>
 #include "Utils.hpp"
+#include <cassert>
 
 using namespace std::chrono;
 using namespace std;
@@ -124,31 +125,97 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
 }
 
 void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
+    if (!string.size()) {
+        return;
+    }
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;
-    auto c = string.begin();
-    while(c != string.end()) {
+    auto c = &string[0];
+    auto end = c + string.size();
+    while(c != end) {
         Node* child = currNode->children[*c];
-        if (child) {
-            currNode = child;
-            c++;
-            int clen = child->partialLen;
-            for (int i = 1; i != clen; i++) {
-                if (c == string.end()) {
-                    UseCurrentPattern(currNode, i + currNode->depth);
-                    return;
-                }
-                if (child->partial[i] != *c) {
-                    UseCurrentPattern(currNode, i + currNode->depth);
-                    currNode = root;
-                    break;
-                }
-                c++;
-            }
-        } else {
+        if (!child) {
             UseCurrentPattern(currNode);
             currNode = root;
+            continue;
+        }
+        currNode = child;
+        if (++c == end) {
+            break;
+        }
+        
+        child = currNode->children[*c];
+        if (!child) {
+            UseCurrentPattern(currNode);
+            currNode = root;
+            continue;
+        }
+        currNode = child;
+        if (++c == end) {
+            break;
+        }
+        
+        child = currNode->children[*c];
+        if (!child) {
+            UseCurrentPattern(currNode);
+            currNode = root;
+            continue;
+        }
+        currNode = child;
+        if (++c == end) {
+            break;
+        }
+        
+        child = currNode->children[*c];
+        if (!child) {
+            UseCurrentPattern(currNode);
+            currNode = root;
+            continue;
+        }
+        currNode = child;
+        if (++c == end) {
+            break;
+        }
+        
+        child = currNode->children[*c];
+        if (!child) {
+            UseCurrentPattern(currNode);
+            currNode = root;
+            continue;
+        }
+        currNode = child;
+        c++;
+        
+        while(c != end) {
+            child = currNode->children[*c];
+            if (child) {
+                currNode = child;
+                c++;
+                int clen = child->partialLen;
+                bool matchFull = true;
+                for (int i = 1; i != clen; i++) {
+                    if (c == end) {
+                        UseCurrentPattern(currNode, i + currNode->depth);
+                        return;
+                    }
+                    if (child->partial[i] != *c) {
+                        UseCurrentPattern(currNode, i + currNode->depth);
+                        currNode = root;
+                        matchFull = false;
+                        break;
+                    }
+                    c++;
+                }
+                if (!matchFull) {
+                    break;
+                }
+                
+            } else {
+                UseCurrentPattern(currNode);
+                currNode = root;
+                break;
+            }
         }
     }
     UseCurrentPattern(currNode);

@@ -24,7 +24,9 @@ public:
 private:
     inline static void PutCharPosition(Trie* tree, size_t stringIdx,
                                 size_t charIdxInString, const string& string);
-    static void DepthFirstSearchForFrequentPatterns(Trie* tree, int prefixLen,
+    static void DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int prefixLen,
+                                                        const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
+    static void DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixLen,
                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
 };
 
