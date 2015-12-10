@@ -80,10 +80,14 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
         
     }
     if (ls.size() == 0 || projected[max].size() < minSupport) {
+        for(auto poss : ls) {
+            auto& vec = projected[poss];
+            vec.clear();
+        }
+        ls.clear();
         return;
     }
     
-    tree->currNode->str += max;
     tree->currNode->partial += max;
     tree->currNode->partialLen++;
     tree->currNode->indices.resize(tree->currNode->indices.size() + 1);

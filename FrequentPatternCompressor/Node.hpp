@@ -26,7 +26,7 @@ struct Node {
     ~Node();
     list<Node*> frequentChildren;
     int index = 0;
-    string str;
+    string prefix;
     string partial;
     int partialLen;
     vector<int32_t> indices;

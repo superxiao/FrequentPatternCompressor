@@ -46,20 +46,19 @@ public:
         return currNode->index;
     }
     int GetTotalEncodedLengthInBits();
-    inline string GetString() {
-        return currNode->str;
+    inline string GetPrefix() {
+        return currNode->prefix;
     }
     inline void AddChildNode(uint8_t c, vector<Position>* positions) {
         size++;
         Node* newChild = new Node();
         currNode->children[c] = newChild;
         currNode->frequentChildren.push_back(newChild);
-        newChild->str = currNode->str + (char)c;
-        newChild->partial = (char)c;
-        newChild->partialLen = 1;
-        newChild->indices.resize(newChild->str.length());
+        newChild->prefix = currNode->prefix + (char)c;
+        newChild->partialLen = 0;
+        newChild->indices.resize(1);
         newChild->patternPositions = *positions;
-        newChild->depth = currNode->str.length();
+        newChild->depth = currNode->prefix.length() - 1;
     }
     
     int MySize();

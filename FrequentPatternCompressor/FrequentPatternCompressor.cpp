@@ -15,6 +15,7 @@
 #include <iostream>
 #include "Utils.hpp"
 #include <cassert>
+#include <unordered_set>
 
 using namespace std::chrono;
 using namespace std;
@@ -36,8 +37,8 @@ void CompareTrie(Node* trie1, Node* trie2) {
         }
         else {
             if (c1) {
-                cout << "Frequent pattern in trie 1 but not trie 2:\n" << c1->str<<endl;
-                cout << "Frequent pattern in trie 2 but not trie 1:\n" << c2->str<<endl;
+                cout << "Frequent pattern in trie 1 but not trie 2:\n" << c1->prefix<<endl;
+                cout << "Frequent pattern in trie 2 but not trie 1:\n" << c2->prefix<<endl;
             }
         }
     }
@@ -76,7 +77,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     memcpy(out + outEnd, &numStrings, sizeof(numStrings));
     outEnd += sizeof(numStrings);
     
+    unordered_set<string> s;
+    
     for(auto &pattern : patterns) {
+        s.insert(pattern);
         uint16_t length = pattern.length();
         memcpy(out + outEnd, &length, 2);
         outEnd += 2;
@@ -123,50 +127,43 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     delete trie;
     return result;
 }
-
 void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
-    if (!string.size()) {
-        return;
-    }
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;
-    auto c = &string[0];
-    auto end = c + string.size();
-    while(c != end) {
-        Node* child = currNode->children[*c];
-        if (!child) {
+    for(uint8_t c : string) {
+        Node* child = currNode->children[c];
+        if (child) {
+            currNode = child;
+        } else {
             UseCurrentPattern(currNode);
-            currNode = root;
-            continue;
+            currNode = root->children[c];
         }
-        currNode = child;
-        if (++c == end) {
-            break;
-        }
-        
-        child = currNode->children[*c];
-        if (!child) {
-            UseCurrentPattern(currNode);
-            currNode = root;
-            continue;
-        }
-        currNode = child;
-        if (++c == end) {
-            break;
-        }
-        
-        child = currNode->children[*c];
-        if (!child) {
-            UseCurrentPattern(currNode);
-            currNode = root;
-            continue;
-        }
-        currNode = child;
-        if (++c == end) {
-            break;
-        }
-        
+    }
+    UseCurrentPattern(currNode);
+}
+
+//void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
+//    if (!string.size()) {
+//        return;
+//    }
+//    Node*& currNode = trie->currNode;
+//    Node* root = trie->root;
+//    currNode = root;
+//    auto c = &string[0];
+//    auto end = c + string.size();
+//    while(c != end) {
+//        Node* child = currNode->children[*c];
+//        if (!child) {
+//            UseCurrentPattern(currNode);
+//            currNode = root;
+//            continue;
+//        }
+//        currNode = child;
+//        if (++c == end) {
+//            break;
+//        }
+//        
 //        child = currNode->children[*c];
 //        if (!child) {
 //            UseCurrentPattern(currNode);
@@ -177,7 +174,7 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
 //        if (++c == end) {
 //            break;
 //        }
-        
+//        
 //        child = currNode->children[*c];
 //        if (!child) {
 //            UseCurrentPattern(currNode);
@@ -185,40 +182,77 @@ void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
 //            continue;
 //        }
 //        currNode = child;
-//        c++;
-        
-        child = currNode->children[*c];
-        
-        if (child) {
-            currNode = child;
-            c++;
-            int clen = child->partialLen;
-            for (int i = 1; i != clen; i++) {
-                if (c == end) {
-                    UseCurrentPattern(currNode, i + currNode->depth);
-                    return;
-                }
-                if (child->partial[i] != *c) {
-                    UseCurrentPattern(currNode, i + currNode->depth);
-                    currNode = root;
-                    break;
-                }
-                c++;
-            }
-        }
-        else {
-            UseCurrentPattern(currNode);
-            currNode = root;
-        }
-    }
-    UseCurrentPattern(currNode);
-}
+//        if (++c == end) {
+//            break;
+//        }
+//        UseCurrentPattern(currNode);
+//        currNode = root;
+//        continue;
+//        
+////        child = currNode->children[*c];
+////        if (!child) {
+////            UseCurrentPattern(currNode);
+////            currNode = root;
+////            continue;
+////        }
+////        currNode = child;
+////        if (++c == end) {
+////            break;
+////        }
+//        
+////        child = currNode->children[*c];
+////        if (!child) {
+////            UseCurrentPattern(currNode);
+////            currNode = root;
+////            continue;
+////        }
+////        currNode = child;
+////        c++;
+//        
+////        child = currNode->children[*c];
+////        if (child) {
+////            currNode = child;
+////            c++;
+//////            if (!currNode->partialLen) {
+//////                UseCurrentPattern(currNode);
+//////                currNode = root;
+//////                continue;
+//////            }
+////            auto ic = c;
+////            for (auto pc : currNode->partial) {
+////                if (c == end) {
+////                    UseCurrentPattern(currNode, c - ic);
+////                    return;
+////                }
+////                if (pc != *c) {
+////                    break;
+////                }
+////                c++;
+////            }
+////            auto d = c - ic;
+////            if (d == 0) {
+////                UseCurrentPattern(currNode);
+////            } else
+////            {
+////                UseCurrentPattern(currNode, d);
+////            }
+////            currNode = root;
+////        }
+////        else {
+////            UseCurrentPattern(currNode);
+////            currNode = root;
+////        }
+//    }
+//    if (currNode != root) {
+//        UseCurrentPattern(currNode);
+//    }
+//}
 
 void FrequentPatternCompressor::UseCurrentPattern(Node* node) {
     auto& index = node->index;
     if (index == 0) {
         index = (int)patterns.size();
-        patterns.push_back(node->str);
+        patterns.push_back(node->prefix);
     }
     //trie->IncrementUsage();
     indices[indexEnd++] =index;
@@ -229,7 +263,7 @@ void FrequentPatternCompressor::UseCurrentPattern(Node* node, int i) {
     auto& index = node->indices[i];
     if (index == 0) {
         index = (int)patterns.size();
-        patterns.emplace_back(node->str.begin(), node->str.begin() + i);
+        patterns.push_back(node->prefix + string(&node->partial[0], i));
     }
     //trie->IncrementUsage();
     indices[indexEnd++] =index;
