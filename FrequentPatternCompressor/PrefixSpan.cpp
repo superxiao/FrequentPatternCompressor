@@ -39,7 +39,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int pref
     Node* currNode = tree->currNode;
     for (auto itr = children.begin(); itr != children.end(); itr++) {
         tree->currNode = *itr;
-        if (prefixLen < 3) {
+        if (prefixLen < 2) {
             DepthFirstSearchForFrequentPatternsShallow(tree, prefixLen + 1,
                                             tree->currNode->patternPositions, strings, minSupport);
         }
