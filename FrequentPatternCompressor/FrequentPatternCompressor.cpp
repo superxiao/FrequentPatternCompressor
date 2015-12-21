@@ -64,9 +64,20 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     // should be optimized away with load/store.
     uint64_t uncompressed_size = 0;
     
-    for (const string& s : strings) {
-        ForwardCover(s, trie);
-        uncompressed_size += s.length();
+    double patternLenSum = trie->GetPatternLenSum();
+    double patternNum = trie->GetPatternNum();
+    double avg = patternLenSum / patternNum;
+    if (avg < 4 || avg / patternNum < 0.01) {
+        for (const string& s : strings) {
+            ForwardCoverShallow(s, trie);
+            uncompressed_size += s.length();
+        }
+    }
+    else {
+        for (const string& s : strings) {
+            ForwardCoverDeep(s, trie);
+            uncompressed_size += s.length();
+        }
     }
     
     outEnd = 0;
@@ -127,23 +138,24 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     delete trie;
     return result;
 }
-//void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
-//    Node*& currNode = trie->currNode;
-//    Node* root = trie->root;
-//    currNode = root;
-//    for(uint8_t c : string) {
-//        Node* child = currNode->children[c];
-//        if (child) {
-//            currNode = child;
-//        } else {
-//            UseCurrentPattern(currNode);
-//            currNode = root->children[c];
-//        }
-//    }
-//    UseCurrentPattern(currNode);
-//}
 
-void FrequentPatternCompressor::ForwardCover(const string& string, Trie* trie){
+void FrequentPatternCompressor::ForwardCoverShallow(const string& string, Trie* trie){
+    Node*& currNode = trie->currNode;
+    Node* root = trie->root;
+    currNode = root;
+    for(uint8_t c : string) {
+        Node* child = currNode->children[c];
+        if (child) {
+            currNode = child;
+        } else {
+            UseCurrentPattern(currNode);
+            currNode = root->children[c];
+        }
+    }
+    UseCurrentPattern(currNode);
+}
+
+void FrequentPatternCompressor::ForwardCoverDeep(const string& string, Trie* trie){
     if (!string.size()) {
         return;
     }

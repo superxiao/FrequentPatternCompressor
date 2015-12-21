@@ -25,9 +25,9 @@ private:
     inline static void PutCharPosition(Trie* tree, size_t stringIdx,
                                 size_t charIdxInString, const string& string);
     static void DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int prefixLen,
-                                                        const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
+                                                        const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport, int& patternNum, int& patternLenSum);
     static void DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixLen,
-                                                    const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport);
+                                                    const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport, int& patternNum, int& patternLenSum);
 };
 
 #endif /* PrefixSpan_hpp */

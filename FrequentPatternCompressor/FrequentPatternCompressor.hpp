@@ -18,7 +18,10 @@ private:
     vector<string> patterns;
     
     // Does inining make a difference?
-    inline void ForwardCover(const string& string, Trie* trie);
+    
+    inline void ForwardCoverShallow(const string& string, Trie* trie);
+
+    inline void ForwardCoverDeep(const string& string, Trie* trie);
     
     inline void UseCurrentPattern(Node* node);
     

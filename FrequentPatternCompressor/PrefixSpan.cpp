@@ -13,7 +13,7 @@ vector<Position> projected[256];
 vector<uint8_t> ls;
 
 void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int prefixLen,
-                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
+                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport, int& patternNum, int& patternLenSum) {
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
@@ -41,17 +41,21 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int pref
         tree->currNode = *itr;
         if (prefixLen < 2) {
             DepthFirstSearchForFrequentPatternsShallow(tree, prefixLen + 1,
-                                            tree->currNode->patternPositions, strings, minSupport);
+                                            tree->currNode->patternPositions, strings, minSupport, patternNum, patternLenSum);
         }
         else {
-            DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1, tree->currNode->patternPositions, strings, minSupport);
+            DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1, tree->currNode->patternPositions, strings, minSupport, patternNum, patternLenSum);
         }
         tree->currNode = currNode;
+    }
+    if (children.size() == 0) {
+        patternNum++;
+        patternLenSum += prefixLen;
     }
 }
 
 void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixLen,
-                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport) {
+                                                     const vector<Position>& prefixPositions, const vector<string>& strings, int minSupport, int& patternNum, int& patternLenSum) {
     for(size_t i = 0; i < prefixPositions.size(); i++)
     {
         Position prefixPos = prefixPositions[i];
@@ -85,6 +89,8 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
             vec.clear();
         }
         ls.clear();
+        patternLenSum += prefixLen;
+        patternNum++;
         return;
     }
     
@@ -100,14 +106,14 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
     ls.clear();
 
     DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1,
-                                        tree->currNode->patternPositions, strings, minSupport);
-    return;
+                                        tree->currNode->patternPositions, strings, minSupport, patternNum, patternLenSum);
 }
 
 Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupport) {
     Trie* tree = BuildTreeWithCharFrequencies(strings, minSupport);
     // bug
     Node** children = tree->currNode->children;
+    int patternNum = 0, patternLenSum = 0;
     for (int i = 0; i < 256; i++) {
         if (children[i]->patternPositions.size() < minSupport) {
             continue;
@@ -115,8 +121,12 @@ Trie* PrefixSpan::GetFrequentPatterns(const vector<string>& strings, int minSupp
         Node* currNode = tree->currNode;
         tree->currNode = children[i];
         DepthFirstSearchForFrequentPatternsShallow(tree, 1, tree->currNode->patternPositions,
-                                            strings, minSupport);
+                                            strings, minSupport, patternNum, patternLenSum);
         tree->currNode = currNode;
     }
+    
+    tree->SetPatternLenSum(patternLenSum);
+    tree->SetPatternNum(patternNum);
+    
     return tree;
 }
