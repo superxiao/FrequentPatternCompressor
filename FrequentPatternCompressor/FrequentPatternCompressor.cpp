@@ -20,9 +20,9 @@
 using namespace std::chrono;
 using namespace std;
 
-char out[10 * 1024 * 1024];
+char out[50 * 1024 * 1024];
 int indexEnd = 0;
-int32_t indices[50*1024*1024]; // Dynamic or static no difference
+uint32_t indices[50*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 void CompareTrie(Node* trie1, Node* trie2) {
@@ -67,7 +67,7 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     double patternLenSum = trie->GetPatternLenSum();
     double patternNum = trie->GetPatternNum();
     double avg = patternLenSum / patternNum;
-    if (avg < 4 || avg / patternNum < 0.01) {
+    if (avg < 4) {
         for (const string& s : strings) {
             ForwardCoverShallow(s, trie);
             uncompressed_size += s.length();
@@ -162,21 +162,15 @@ void FrequentPatternCompressor::ForwardCoverDeep(const string& string, Trie* tri
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;
-    auto c = &string[0];
+    const uint8_t* c = (const uint8_t*)&string[0];
     auto end = c + string.size();
     while(c != end) {
-        Node* child = currNode->children[*c];
-        if (!child) {
-            UseCurrentPattern(currNode);
-            currNode = root;
-            continue;
-        }
-        currNode = child;
+        currNode = currNode->children[*c];
         if (++c == end) {
             break;
         }
         
-        child = currNode->children[*c];
+        Node* child = currNode->children[*c];
         if (!child) {
             UseCurrentPattern(currNode);
             currNode = root;
@@ -222,11 +216,6 @@ void FrequentPatternCompressor::ForwardCoverDeep(const string& string, Trie* tri
         if (child) {
             currNode = child;
             c++;
-//            if (!currNode->partialLen) {
-//                UseCurrentPattern(currNode);
-//                currNode = root;
-//                continue;
-//            }
             auto ic = c;
             for (auto pc : currNode->partial) {
                 if (c == end) {

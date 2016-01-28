@@ -24,7 +24,7 @@ using namespace std::chrono;
 
 static const int LINES_PER_BLOCK = 100000;
 static const bool PRINT_STATS = true;
-static const int REPEAT = 1;
+static const int REPEAT = 10;
 
 struct cstat {
     unsigned long original_size;
@@ -271,28 +271,33 @@ void compress_file_frequent_varying(string file, int repeat = 1){
 
 int main(int argc, const char * argv[]) {
     vector<string> infiles = {
-//        "gen-address",
-//        "gen-name",
-//        "gen-iso8601",
+        "gen-iso8601",
 //        "gen-uri",
 //        "gen-email",
         "gen-user_agent",
-//        "gen-credit_card_number",
+        "gen-credit_card_number",
 //        "gen-credit_card_full",
-//        "gen-sha1",
-        "gen-text",
-//        "gen-phone_number"
+        "gen-sha1",
+//        "gen-text",
+        "gen-phone_number",
+        "gen-address",
+        "gen-name",
+        
         
     };
     
-    for(int j = 0; j < 1; j++) {
+    for(int j = 0; j < 10; j++) {
         cout << "iteration " << j << ":" << endl;
         for (string& file : infiles) {
             cout << "Benchmarking " << file << endl;
             auto f_stat = compress_file_frequent(indir + file + ".txt");
-            //append_stat(outdir + "frequent_depth4_" + file + ".txt", f_stat);
-//            auto s_stat = compress_file_snappy(indir + file + ".txt");
-//            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            auto s_stat = compress_file_snappy(indir + file + ".txt");
+            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            append_stat(outdir + "frequent_" + file + ".txt", f_stat);
+//            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/redit");
+//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
+//            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/redit");
+//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
 //            compress_file_frequent_varying(file, 1);
         }
     }

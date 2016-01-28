@@ -25,13 +25,11 @@ struct Node {
     
     ~Node();
     list<Node*> frequentChildren;
-    int index = 0;
+    uint32_t index = 0;
     string prefix;
     string partial;
-    int partialLen;
     vector<int32_t> indices;
     vector<Position> patternPositions;
-    uint8_t depth;
     Node* children[256] {NULL}; // Optimization using pointer?
 };
 

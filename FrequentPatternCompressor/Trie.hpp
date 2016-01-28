@@ -57,10 +57,8 @@ public:
         currNode->children[c] = newChild;
         currNode->frequentChildren.push_back(newChild);
         newChild->prefix = currNode->prefix + (char)c;
-        newChild->partialLen = 0;
         newChild->indices.resize(1);
         newChild->patternPositions = *positions;
-        newChild->depth = currNode->prefix.length() - 1;
     }
     
     inline void SetPatternLenSum(int patternLenSum) {

@@ -95,7 +95,6 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
     }
     
     tree->currNode->partial += max;
-    tree->currNode->partialLen++;
     tree->currNode->indices.resize(tree->currNode->indices.size() + 1);
     tree->currNode->patternPositions = projected[max];
 
