@@ -67,18 +67,18 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     double patternLenSum = trie->GetPatternLenSum();
     double patternNum = trie->GetPatternNum();
     double avg = patternLenSum / patternNum;
-    if (avg < 4) {
-        for (const string& s : strings) {
-            ForwardCoverShallow(s, trie);
-            uncompressed_size += s.length();
-        }
-    }
-    else {
+//    if (avg < 4) {
+//        for (const string& s : strings) {
+//            ForwardCoverShallow(s, trie);
+//            uncompressed_size += s.length();
+//        }
+//    }
+//    else {
         for (const string& s : strings) {
             ForwardCoverDeep(s, trie);
             uncompressed_size += s.length();
         }
-    }
+//    }
     
     outEnd = 0;
     memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
@@ -165,19 +165,22 @@ void FrequentPatternCompressor::ForwardCoverDeep(const string& string, Trie* tri
     const uint8_t* c = (const uint8_t*)&string[0];
     auto end = c + string.size();
     while(c != end) {
-        currNode = currNode->children[*c];
-        if (++c == end) {
-            break;
-        }
         
-        Node* child = currNode->children[*c];
-        if (!child) {
+        auto node = trie->array[*(uint16_t*)c];
+        
+        if (!node) {
+            
+            currNode = currNode->children[*c];
+            if (++c == end) {
+                break;
+            }
             UseCurrentPattern(currNode);
             currNode = root;
             continue;
         }
-        currNode = child;
-        if (++c == end) {
+        
+        currNode = node;
+        if ((c+=2) == end) {
             break;
         }
         
@@ -212,7 +215,7 @@ void FrequentPatternCompressor::ForwardCoverDeep(const string& string, Trie* tri
 //        currNode = child;
 //        c++;
         
-        child = currNode->children[*c];
+        Node* child = currNode->children[*c];
         if (child) {
             currNode = child;
             c++;

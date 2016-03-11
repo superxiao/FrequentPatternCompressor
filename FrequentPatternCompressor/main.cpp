@@ -24,7 +24,7 @@ using namespace std::chrono;
 
 static const int LINES_PER_BLOCK = 100000;
 static const bool PRINT_STATS = true;
-static const int REPEAT = 10;
+static const int REPEAT = 1;
 
 struct cstat {
     unsigned long original_size;
@@ -87,6 +87,7 @@ cstat compress_file_snappy(string file) {
     for (int j = 0; j < REPEAT; j++) {
         ifstream s(file);
         while (!s.eof()) {
+            string lenData;
             string data;
             int i = 0;
             for( string line; getline( s, line );)
@@ -129,7 +130,7 @@ cstat compress_file_snappy(string file) {
     return s;
 }
 
-cstat compress_file_frequent(string file, int sample_size = 100, int support = 5) {
+cstat compress_file_frequent(string file, int sample_size = 200, int support = 5) {
     vector<string> strings;
     long duration = 0;
     long decompressDuration = 0;
@@ -271,17 +272,17 @@ void compress_file_frequent_varying(string file, int repeat = 1){
 
 int main(int argc, const char * argv[]) {
     vector<string> infiles = {
-        "gen-iso8601",
+//        "gen-iso8601",
 //        "gen-uri",
 //        "gen-email",
-        "gen-user_agent",
-        "gen-credit_card_number",
+//        "gen-user_agent",
+//        "gen-credit_card_number",
 //        "gen-credit_card_full",
-        "gen-sha1",
+//        "gen-sha1",
 //        "gen-text",
-        "gen-phone_number",
+//        "gen-phone_number",
         "gen-address",
-        "gen-name",
+//        "gen-name",
         
         
     };
@@ -291,12 +292,12 @@ int main(int argc, const char * argv[]) {
         for (string& file : infiles) {
             cout << "Benchmarking " << file << endl;
             auto f_stat = compress_file_frequent(indir + file + ".txt");
-            auto s_stat = compress_file_snappy(indir + file + ".txt");
-            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
-            append_stat(outdir + "frequent_" + file + ".txt", f_stat);
-//            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/redit");
+            //auto s_stat = compress_file_snappy(indir + file + ".txt");
+            //append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            //append_stat(outdir + "frequent_" + file + ".txt", f_stat);
+//            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
 //            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
-//            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/redit");
+//            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
 //            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
 //            compress_file_frequent_varying(file, 1);
         }

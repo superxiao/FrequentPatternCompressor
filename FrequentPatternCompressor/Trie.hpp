@@ -19,6 +19,7 @@ private:
 public:
     
     Node* root;
+    Node* array[256 * 256] {0};
     Node* currNode;
     int totalEncodedLengthIntBits;
     int size = 0;
@@ -57,8 +58,9 @@ public:
         currNode->children[c] = newChild;
         currNode->frequentChildren.push_back(newChild);
         newChild->prefix = currNode->prefix + (char)c;
+        // TODO no need for this for internal nodes.
         newChild->indices.resize(1);
-        newChild->patternPositions = *positions;
+        newChild->patternPositions.swap(*positions);
     }
     
     inline void SetPatternLenSum(int patternLenSum) {
