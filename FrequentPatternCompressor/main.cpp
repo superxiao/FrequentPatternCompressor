@@ -130,7 +130,7 @@ cstat compress_file_snappy(string file) {
     return s;
 }
 
-cstat compress_file_frequent(string file, int sample_size = 200, int support = 5) {
+cstat compress_file_frequent(string file, int sample_size = 100, int support = 2) {
     vector<string> strings;
     long duration = 0;
     long decompressDuration = 0;
@@ -279,9 +279,9 @@ int main(int argc, const char * argv[]) {
 //        "gen-credit_card_number",
 //        "gen-credit_card_full",
 //        "gen-sha1",
-//        "gen-text",
+        "gen-text",
 //        "gen-phone_number",
-        "gen-address",
+//        "gen-address",
 //        "gen-name",
         
         

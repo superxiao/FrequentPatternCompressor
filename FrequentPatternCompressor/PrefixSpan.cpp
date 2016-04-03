@@ -32,7 +32,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int pref
     for(auto poss : ls) {
         auto& vec = projected[poss];
         
-        if (vec.size() >= 5) {
+        if (vec.size() >= minSupport) {
             tree->AddChildNode(poss, &vec);
         }
         vec.clear();
@@ -93,7 +93,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
         poss++;
         
     }
-    if (ls.size() == 0 || projected[max].size() < 5) {
+    if (ls.size() == 0 || projected[max].size() < minSupport) {
         for(auto poss : ls) {
             projected[poss].clear();
         }
