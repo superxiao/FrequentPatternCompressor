@@ -23,6 +23,8 @@ private:
 
     inline void ForwardCoverDeep(const string& string, Trie* trie);
     
+    void ForwardCoverWithLookahead(const string& string, Trie* trie);
+    
     inline void UseCurrentPattern(Node* node);
     
     inline void UseCurrentPattern(Node* node, int i);

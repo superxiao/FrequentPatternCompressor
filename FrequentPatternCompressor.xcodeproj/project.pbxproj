@@ -20,6 +20,8 @@
 		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 		D8EAF2701BE4164200D68BBE /* libFastPFor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8EAF26F1BE4164200D68BBE /* libFastPFor.a */; };
+		D8F8F24B1CC17C24008BF009 /* RePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8F8F2491CC17C24008BF009 /* RePair.cpp */; };
+		D8F8F24E1CC2DF19008BF009 /* TestRePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -60,6 +62,10 @@
 		D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrequentPatternCompressor; sourceTree = "<group>"; };
 		D8DD8EAC1BD866B50059803D /* libsnappy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsnappy.a; sourceTree = "<group>"; };
 		D8EAF26F1BE4164200D68BBE /* libFastPFor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFastPFor.a; sourceTree = "<group>"; };
+		D8F8F2491CC17C24008BF009 /* RePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RePair.cpp; sourceTree = "<group>"; };
+		D8F8F24A1CC17C24008BF009 /* RePair.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RePair.hpp; sourceTree = "<group>"; };
+		D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRePair.cpp; sourceTree = "<group>"; };
+		D8F8F24D1CC2DF19008BF009 /* TestRePair.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestRePair.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,8 @@
 		D82DB6241BD18DA400249E13 /* FrequentPatternCompressor */ = {
 			isa = PBXGroup;
 			children = (
+				D8F8F2491CC17C24008BF009 /* RePair.cpp */,
+				D8F8F24A1CC17C24008BF009 /* RePair.hpp */,
 				D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */,
 				D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */,
 				D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */,
@@ -118,6 +126,8 @@
 				D80CFEE91BD70DD700121CA8 /* Utils.hpp */,
 				D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */,
 				D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */,
+				D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */,
+				D8F8F24D1CC2DF19008BF009 /* TestRePair.hpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -178,12 +188,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8F8F24E1CC2DF19008BF009 /* TestRePair.cpp in Sources */,
 				D80788C11BD5677800638410 /* FrequentPatternCompressor.cpp in Sources */,
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
+				D8F8F24B1CC17C24008BF009 /* RePair.cpp in Sources */,
 				D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
 				D82DB62E1BD1956200249E13 /* Trie.cpp in Sources */,
@@ -230,6 +242,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/boost/1.60.0_1/include;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = NO;
@@ -267,6 +280,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/Cellar/boost/1.60.0_1/include;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;

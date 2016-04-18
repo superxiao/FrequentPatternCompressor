@@ -7,9 +7,9 @@
 //
 
 #include <stdio.h>
-
-#define CATCH_CONFIG_RUNNER
-//#define CATCH_CONFIG_MAIN
+#include <iostream>
+//#define CATCH_CONFIG_RUNNER
+#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "Utils.hpp"
 #include "FrequentPatternCompressor.hpp"
@@ -30,15 +30,37 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
 
     
     vector<string> strings;
-   
-    ifstream s("/Users/xiaojianwang/Desktop/alice29r.txt");
-    for (string line; getline(s, line);) {
-        strings.push_back(line);
-    }
-    compressed = compressor.Compress(strings);
-    decompressed = decompressor.Decompress(compressed);
-    REQUIRE(strings.size() == decompressed.size());
-    for(int i = 0; i < strings.size(); i++) {
-        REQUIRE(strings[i] == decompressed[i]);
+    
+    string indir = "/Users/xiaojianwang/Documents/workspace/benchmarks/gen/";
+    vector<string> infiles = {
+        //        "gen-iso8601",
+        //        "gen-uri",
+        //        "gen-email",
+        //        "gen-user_agent",
+        //        "gen-credit_card_number",
+        //        "gen-credit_card_full",
+        //        "gen-sha1",
+        "gen-text",
+        //        "gen-phone_number",
+        //        "gen-address",
+        //        "gen-name",
+        
+        
+    };
+    for (string file : infiles) {
+        ifstream s(indir + file + ".txt");
+        long uncompressedSize = 0;
+        for (string line; strings.size() < 100000 && getline(s, line);) {
+            strings.push_back(line);
+            uncompressedSize += 2 + line.size();
+        }
+        compressed = compressor.Compress(strings);
+        cout << "Compression ratio: " << compressed.size() * 1.0 / uncompressedSize << endl;
+        decompressed = decompressor.Decompress(compressed);
+        REQUIRE(strings.size() == decompressed.size());
+        for(int i = 0; i < strings.size(); i++) {
+            REQUIRE(strings[i] == decompressed[i]);
+        }
+        strings.clear();
     }
 }

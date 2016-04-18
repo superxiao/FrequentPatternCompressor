@@ -51,6 +51,7 @@ void Trie::BuildTrie(const vector<string> &strings) {
     for (int c = 0; c < 256; c++) {
         root->children[c] = new Node();
         root->children[c]->prefix += char(c);
+        root->children[c]->isCandidate = true;
         size++;
     }
     for (const string& str : strings) {
@@ -63,6 +64,7 @@ void Trie::BuildTrie(const vector<string> &strings) {
             }
             currNode = currNode->children[c];
         }
+        currNode->isCandidate = true;
     }
 }
     

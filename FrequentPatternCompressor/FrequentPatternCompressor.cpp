@@ -16,6 +16,7 @@
 #include "Utils.hpp"
 #include <cassert>
 #include <unordered_set>
+#include "RePair.hpp"
 
 using namespace std::chrono;
 using namespace std;
@@ -55,7 +56,10 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
         //sample[i] = strings[i];
     }
     
-    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
+    //Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
+    
+    RePair repair;
+    Trie* trie = repair.getPatternTrie(sample);
     
     patterns.reserve(strings.size() + 256);
     patterns.push_back("0");
@@ -68,16 +72,17 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     double patternNum = trie->GetPatternNum();
     double avg = patternLenSum / patternNum;
 //    if (avg < 4) {
-//        for (const string& s : strings) {
-//            ForwardCoverShallow(s, trie);
-//            uncompressed_size += s.length();
-//        }
-//    }
-//    else {
         for (const string& s : strings) {
-            ForwardCoverDeep(s, trie);
+//            ForwardCoverShallow(s, trie);
+            ForwardCoverWithLookahead(s, trie);
             uncompressed_size += s.length();
         }
+//    }
+//    else {
+//        for (const string& s : strings) {
+//            ForwardCoverDeep(s, trie);
+//            uncompressed_size += s.length();
+//        }
 //    }
     
     outEnd = 0;
@@ -151,6 +156,34 @@ void FrequentPatternCompressor::ForwardCoverShallow(const string& string, Trie* 
             UseCurrentPattern(currNode);
             currNode = root->children[c];
         }
+    }
+    UseCurrentPattern(currNode);
+}
+
+void FrequentPatternCompressor::ForwardCoverWithLookahead(const string& string, Trie* trie){
+    Node*& currNode = trie->currNode;
+    Node* root = trie->root;
+    currNode = root;
+    Node* candidateNode = NULL;
+    int i = 0;
+    int j = 0;
+    while(i < string.size()) {
+        auto c = string[i];
+        Node* child = currNode->children[c];
+        if (child) {
+            if (child->isCandidate) {
+                candidateNode = child;
+                j = i;
+            }
+            currNode = child;
+        } else {
+            UseCurrentPattern(candidateNode);
+            j++;
+            i = j;
+            currNode = root->children[string[i]];
+            candidateNode = currNode;
+        }
+        i++;
     }
     UseCurrentPattern(currNode);
 }

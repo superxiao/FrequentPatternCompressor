@@ -31,6 +31,7 @@ struct Node {
     vector<int32_t> indices;
     vector<Position> patternPositions;
     Node* children[256] {NULL}; // Optimization using pointer?
+    bool isCandidate;
 };
 
 #endif /* Node_hpp */
