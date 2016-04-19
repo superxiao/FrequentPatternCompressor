@@ -270,36 +270,36 @@ void compress_file_frequent_varying(string file, int repeat = 1){
     }
 }
 
-//int main(int argc, const char * argv[]) {
-//    vector<string> infiles = {
-////        "gen-iso8601",
-////        "gen-uri",
-////        "gen-email",
-////        "gen-user_agent",
-////        "gen-credit_card_number",
-////        "gen-credit_card_full",
-////        "gen-sha1",
-//        "gen-text",
-////        "gen-phone_number",
-////        "gen-address",
-////        "gen-name",
-//        
-//        
-//    };
-//    
-//    for(int j = 0; j < 10; j++) {
-//        cout << "iteration " << j << ":" << endl;
-//        for (string& file : infiles) {
-//            cout << "Benchmarking " << file << endl;
-//            auto f_stat = compress_file_frequent(indir + file + ".txt");
-//            //auto s_stat = compress_file_snappy(indir + file + ".txt");
-//            //append_stat(outdir + "snappy_" + file + ".txt", s_stat);
-//            //append_stat(outdir + "frequent_" + file + ".txt", f_stat);
-////            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
-////            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
-////            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
-////            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
-////            compress_file_frequent_varying(file, 1);
-//        }
-//    }
-//}
+int main(int argc, const char * argv[]) {
+    vector<string> infiles = {
+//        "gen-iso8601",
+//        "gen-uri",
+//        "gen-email",
+//        "gen-user_agent",
+//        "gen-credit_card_number",
+//        "gen-credit_card_full",
+//        "gen-sha1",
+        "gen-text",
+//        "gen-phone_number",
+//        "gen-address",
+//        "gen-name",
+        
+        
+    };
+    
+    for(int j = 0; j < 10; j++) {
+        cout << "iteration " << j << ":" << endl;
+        for (string& file : infiles) {
+            cout << "Benchmarking " << file << endl;
+            auto f_stat = compress_file_frequent(indir + file + ".txt");
+            //auto s_stat = compress_file_snappy(indir + file + ".txt");
+            //append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            //append_stat(outdir + "frequent_" + file + ".txt", f_stat);
+//            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
+//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
+//            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
+//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
+//            compress_file_frequent_varying(file, 1);
+        }
+    }
+}

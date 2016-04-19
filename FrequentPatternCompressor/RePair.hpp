@@ -24,7 +24,12 @@ struct PairList;
 
 struct compare_pair_node
 {
-    bool operator()(PairList* const& n1, PairList* const& n2) const;
+    inline bool operator()(PairList* const& n1, PairList* const& n2) const;
+};
+
+struct SymbolPair {
+    uint16_t firstSymbol;
+    uint16_t secondSymbol;
 };
 
 struct PairList {
@@ -32,8 +37,10 @@ struct PairList {
     ThreadedCell* head = NULL;
     ThreadedCell* tail = NULL;
     fibonacci_heap<PairList*, compare<compare_pair_node>>::handle_type qhandle;
-    string pairPhrase = "";
+    //uint32_t pairPhrase; // First 16 bit is first symbol, second is next
+    string phrase = "";
     bool inQueue = false;
+    SymbolPair pair;
 };
 
 struct ThreadedCell {
@@ -44,6 +51,7 @@ struct ThreadedCell {
     PairList* list = NULL;
     ThreadedCell* symbolHead = NULL;
     int symbolLen = 1;
+    uint32_t symbol;
 };
 
 class RePair {
@@ -52,13 +60,10 @@ public:
     Trie* getPatternTrie(const vector<string>& strings);
     
 private:
-    void initRePair(const vector<string>& strings);
-    string getNextPair(const vector<string>& strings);
-    fibonacci_heap<PairList*, compare<compare_pair_node>> pq;
-    vector<vector<ThreadedCell>> threadedArray;
-    unordered_map<string, PairList> pairTable;
-    PairList* appendPairCell(const vector<string>& strings, ThreadedCell* cell, int firstSymbolLen, int secondSymbolLen);
-    void removePairCell(ThreadedCell* cell);
+    inline void initRePair(const vector<string>& strings);
+    inline string getNextPair(const vector<string>& strings);
+    inline PairList* appendPairCell(const vector<string>& strings, ThreadedCell* cell, uint16_t firstSymbol, uint16_t secondSymbol);
+    inline void removePairCell(ThreadedCell* cell);
 };
 
 #endif /* RePair_hpp */

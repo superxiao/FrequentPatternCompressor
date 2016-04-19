@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 #include <iostream>
-//#define CATCH_CONFIG_RUNNER
-#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_RUNNER
+//#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 #include "Utils.hpp"
 #include "FrequentPatternCompressor.hpp"
@@ -28,7 +28,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
         REQUIRE(dates[i] == decompressed[i]);
     }
 
-    
+    FrequentPatternCompressor compressor2;
     vector<string> strings;
     
     string indir = "/Users/xiaojianwang/Documents/workspace/benchmarks/gen/";
@@ -36,7 +36,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
         //        "gen-iso8601",
         //        "gen-uri",
         //        "gen-email",
-        //        "gen-user_agent",
+                "gen-user_agent",
         //        "gen-credit_card_number",
         //        "gen-credit_card_full",
         //        "gen-sha1",
@@ -54,7 +54,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
             strings.push_back(line);
             uncompressedSize += 2 + line.size();
         }
-        compressed = compressor.Compress(strings);
+        compressed = compressor2.Compress(strings);
         cout << "Compression ratio: " << compressed.size() * 1.0 / uncompressedSize << endl;
         decompressed = decompressor.Decompress(compressed);
         REQUIRE(strings.size() == decompressed.size());
