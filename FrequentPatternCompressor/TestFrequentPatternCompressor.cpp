@@ -19,7 +19,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
           "FrequentPatternDecompressor can losslessly reconstruct the original data",
           "[FrequentPatternCompressor]" ) {
     FrequentPatternCompressor compressor;
-    auto dates = random_dates(10000);
+    auto dates = random_dates(1000);
     auto compressed = compressor.Compress(dates);
     FrequentPatternDecompressor decompressor;
     auto decompressed = decompressor.Decompress(compressed);
@@ -50,7 +50,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
     for (string file : infiles) {
         ifstream s(indir + file + ".txt");
         long uncompressedSize = 0;
-        for (string line; strings.size() < 100000 && getline(s, line);) {
+        for (string line; strings.size() < 1000 && getline(s, line);) {
             strings.push_back(line);
             uncompressedSize += 2 + line.size();
         }

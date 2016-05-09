@@ -20,7 +20,11 @@ TEST_CASE( "PrefixSpan should be able to find just the frequent"
     strings.push_back("2345");
     strings.push_back("4235");
     strings.push_back("023465");
-    Trie* trie = prefixSpan.GetFrequentPatterns(strings, 2);
+    vector<const string*> string_ptrs;
+    for(auto& str : strings) {
+        string_ptrs.push_back(&str);
+    }
+    Trie* trie = prefixSpan.GetFrequentPatterns(string_ptrs, 2, false);
     REQUIRE(trie->Contains("123"));
     REQUIRE(trie->Contains("234"));
     REQUIRE(trie->Contains("235"));

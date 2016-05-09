@@ -1,3 +1,4 @@
+
 //
 //  FrequentPatternCompressor.cpp
 //  FrequentPatternCompressor
@@ -17,6 +18,7 @@
 #include <cassert>
 #include <unordered_set>
 #include "RePair.hpp"
+#include <cmath>
 
 using namespace std::chrono;
 using namespace std;
@@ -25,6 +27,10 @@ char out[50 * 1024 * 1024];
 int indexEnd = 0;
 uint32_t indices[50*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
+
+vector<Node*> leftNodes; // No string should be longer than 255
+vector<Node*> rightNodes;
+vector<Node*> rightMaxNodes;
 
 void CompareTrie(Node* trie1, Node* trie2) {
     for(int i = 0; i < 256; i++) {
@@ -45,21 +51,27 @@ void CompareTrie(Node* trie1, Node* trie2) {
     }
 }
 
-string FrequentPatternCompressor::Compress(const vector<string>& strings, int sample_size, int support) {
+string FrequentPatternCompressor::Compress(const vector<string>& strings, double sample_rate, double rel_support, bool prune) {
+    
+//    leftNodes.resize(1000);
+//    rightNodes.resize(1000);
+//    rightMaxNodes.resize(1000);
+    
     indexEnd = 0;
+    int sample_size = ceil(strings.size() * sample_rate);
     sample_size = min(sample_size, (int)strings.size());
-    vector<string> sample(sample_size);
+    int support = max(ceil(sample_size * rel_support), 2.0);
+    vector<const string*> sample(sample_size);
     srand((unsigned)time(NULL));
 
     for (size_t i = 0; i < sample_size; i++) {
-        sample[i] = strings[rand() % strings.size()]; // TODO optimization: use string pointers
-        //sample[i] = strings[i];
+        sample[i] = &strings[rand() % strings.size()];
     }
     
-    //Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support);
+    Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support, prune);
     
-    RePair repair;
-    Trie* trie = repair.getPatternTrie(sample);
+//    RePair repair;
+//    Trie* trie = repair.getPatternTrie(sample);
     
     patterns.reserve(strings.size() + 256);
     patterns.push_back("0");
@@ -67,23 +79,20 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, int sa
     // Using 32 bit here will cause later copying to be slower. But that
     // should be optimized away with load/store.
     uint64_t uncompressed_size = 0;
-    
-    double patternLenSum = trie->GetPatternLenSum();
-    double patternNum = trie->GetPatternNum();
-    double avg = patternLenSum / patternNum;
-//    if (avg < 4) {
+
+    if (!prune) {
         for (const string& s : strings) {
-//            ForwardCoverShallow(s, trie);
-            ForwardCoverWithLookahead(s, trie);
+            ForwardCoverShallow(s, trie);
+//            ForwardCoverWithLookAhead(s, trie);
             uncompressed_size += s.length();
         }
-//    }
-//    else {
-//        for (const string& s : strings) {
-//            ForwardCoverDeep(s, trie);
-//            uncompressed_size += s.length();
-//        }
-//    }
+    }
+    else {
+        for (const string& s : strings) {
+            ForwardCoverDeep(s, trie);
+            uncompressed_size += s.length();
+        }
+    }
     
     outEnd = 0;
     memcpy(out, &uncompressed_size, sizeof(uncompressed_size));
@@ -160,7 +169,78 @@ void FrequentPatternCompressor::ForwardCoverShallow(const string& string, Trie* 
     UseCurrentPattern(currNode);
 }
 
-void FrequentPatternCompressor::ForwardCoverWithLookahead(const string& string, Trie* trie){
+void FrequentPatternCompressor::ForwardCoverWithLookAhead(const string& string, Trie* trie){
+    Node* root = trie->root;
+    int i = 0;
+    Node* leftNode = root;
+    Node* rightNode = root;
+    int rightMaxBegin = 0;
+    int rightMaxLen = 0;
+    while(i != string.size()) {
+        int leftBegin = i;
+        int leftLen = 0;
+        
+        if (rightMaxBegin) {
+            leftBegin = rightMaxBegin;
+            leftLen = rightMaxLen;
+            leftNode = rightMaxNodes[rightMaxLen - 1];
+            swap(leftNodes, rightMaxNodes);
+        }
+        else {
+            while(i != string.size()) {
+                uint8_t c = string[i];
+                Node* child = leftNode->children[c];
+                if (child) {
+                    leftNode = child;
+                    leftNodes[leftLen] = leftNode;
+                } else {
+                    break;
+                }
+                i++;
+                leftLen++;
+            }
+        }
+        
+        int leftEnd = leftBegin + 2;
+        rightMaxBegin = 0;
+        rightMaxLen = leftLen;
+        int rightLen = 0;
+        for (int rightBegin = leftBegin + 1; rightBegin != leftEnd; rightBegin++) {
+            rightNode = root;
+            int j = rightBegin;
+            rightLen = 0;
+            while(j != string.size()) {
+                uint8_t c = string[j];
+                Node* child = rightNode->children[c];
+                if (child) {
+                    rightNode = child;
+                    rightNodes[rightLen] = rightNode;
+                } else {
+                    if(rightLen > rightMaxLen) {
+                        i = j;
+                        rightMaxLen = rightLen;
+                        rightMaxBegin = rightBegin;
+                        std::swap(rightNodes, rightMaxNodes);
+                    }
+                    break;
+                }
+                j++;
+                rightLen++;
+            }
+        }
+        
+        if (rightMaxBegin == 0) {
+            UseCurrentPattern(leftNode);
+            leftNode = root;
+        } else {
+            UseCurrentPattern(leftNodes[rightMaxBegin - leftBegin - 1]);
+            leftNode = root;
+        }
+    }
+    int k = 0;
+}
+
+void FrequentPatternCompressor::ForwardCoverWithGappedPhrases(const string& string, Trie* trie){
     Node*& currNode = trie->currNode;
     Node* root = trie->root;
     currNode = root;

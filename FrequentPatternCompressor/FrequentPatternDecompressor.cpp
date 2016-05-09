@@ -12,7 +12,9 @@
 
 uint32_t integers[50 * 1024 * 1024];
 
+
 string FrequentPatternDecompressor::Decompress(const string& compressed, vector<uint32_t>& outLens) {
+    
     const uint8_t* begin = reinterpret_cast<const uint8_t*>(compressed.c_str());
     const uint8_t* data = begin;
     
@@ -21,13 +23,11 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
     
     uint32_t numStrings = *reinterpret_cast<const uint32_t*>(data);
     data += sizeof(numStrings);
-    
+    vector<const uint8_t*> dict;
+    vector<int> lens;
     if (outLens.size() < numStrings) {
         outLens.resize(numStrings);
     }
-    
-    vector<const uint8_t*> dict;
-    vector<int> lens;
     while (true) {
         int patternLen = (int)*reinterpret_cast<const uint16_t*>(data);
         data += 2;
@@ -82,6 +82,7 @@ string FrequentPatternDecompressor::Decompress(const string& compressed, vector<
     }
     
     result.resize(op - &*result.begin());
+
     return move(result);
 }
 

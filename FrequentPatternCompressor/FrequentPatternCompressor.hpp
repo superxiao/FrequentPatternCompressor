@@ -23,7 +23,9 @@ private:
 
     inline void ForwardCoverDeep(const string& string, Trie* trie);
     
-    void ForwardCoverWithLookahead(const string& string, Trie* trie);
+    void ForwardCoverWithLookAhead(const string& string, Trie* trie);
+    
+    void ForwardCoverWithGappedPhrases(const string& string, Trie* trie);
     
     inline void UseCurrentPattern(Node* node);
     
@@ -35,6 +37,6 @@ private:
 public:
     int charNum;
     long forwardCoverTime;
-    string Compress(const vector<string>& strings, int sample_size = 100, int support = 5);
+    string Compress(const vector<string>& strings, double sample_rate = 100, double rel_support = 0.05, bool prune = false);
 };
 #endif /* FrequentPatternCompressor_hpp */

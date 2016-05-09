@@ -23,8 +23,6 @@ public:
     Node* currNode;
     int totalEncodedLengthIntBits;
     int size = 0;
-    int patternNum = 0;
-    int patternLenSum = 0;
 
     Trie();
     ~Trie();
@@ -61,22 +59,6 @@ public:
         // TODO no need for this for internal nodes.
         newChild->indices.resize(1);
         newChild->patternPositions.swap(*positions);
-    }
-    
-    inline void SetPatternLenSum(int patternLenSum) {
-        this->patternLenSum = patternLenSum;
-    }
-    
-    inline double GetPatternLenSum() {
-        return this->patternLenSum;
-    }
-    
-    inline void SetPatternNum(int patternNum) {
-        this->patternNum = patternNum;
-    }
-    
-    inline double GetPatternNum() {
-        return this->patternNum;
     }
     
     int MySize();

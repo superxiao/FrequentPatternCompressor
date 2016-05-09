@@ -24,7 +24,8 @@ using namespace std::chrono;
 
 static const int LINES_PER_BLOCK = 100000;
 static const bool PRINT_STATS = true;
-static const int REPEAT = 1;
+static const int REPEAT = 10;
+static const int BLOCK_SIZE = 4 * 1024 * 1024;
 
 struct cstat {
     unsigned long original_size;
@@ -61,9 +62,9 @@ inline string decompress_frequent(const string& compressed) {
     return move(decompressed);
 }
 
-inline string compress_frequent(const vector<string>& strings, int sample_size = 100, int support = 5) {
+inline string compress_frequent(const vector<string>& strings, double sample_rate = 0.001, double rel_support = 0.05, bool prune = false) {
     auto compressor = FrequentPatternCompressor();
-    string compressed = compressor.Compress(strings, sample_size, support);
+    string compressed = compressor.Compress(strings, sample_rate, rel_support, prune);
     return move(compressed);
 }
 
@@ -100,7 +101,7 @@ cstat compress_file_snappy(string file) {
                 data.insert(data.end(), lenBytes, lenBytes + 2);
                 data.append(line);
                 i++;
-                if (i == LINES_PER_BLOCK) {
+                if (data.size() > BLOCK_SIZE) {
                     break;
                 }
             }
@@ -130,7 +131,7 @@ cstat compress_file_snappy(string file) {
     return s;
 }
 
-cstat compress_file_frequent(string file, int sample_size = 200, int support = 5) {
+cstat compress_file_frequent(string file, bool prune, int sample_size = 200, int support = 5) {
     vector<string> strings;
     long duration = 0;
     long decompressDuration = 0;
@@ -138,8 +139,10 @@ cstat compress_file_frequent(string file, int sample_size = 200, int support = 5
     unsigned long compressedSize = 0;
     for (int j = 0; j < REPEAT; j++) {
         ifstream s(file);
+        unsigned long itrSize = 0;
         while(!s.eof()) {
             int i = 0;
+            unsigned long blockSize = 0;
             strings.clear();
             for (string line; getline(s, line);) {
                 if (line == "") {
@@ -147,8 +150,10 @@ cstat compress_file_frequent(string file, int sample_size = 200, int support = 5
                 }
                 strings.push_back(line);
                 size += line.length() + 2;
+                blockSize += line.length() + 2;
+                itrSize += line.length() + 2;
                 i++;
-                if (i == LINES_PER_BLOCK) {
+                if (blockSize >= BLOCK_SIZE && itrSize < 500 * 1024 * 1024 - 2*1024*1024) {
                     break;
                 }
             }
@@ -156,7 +161,7 @@ cstat compress_file_frequent(string file, int sample_size = 200, int support = 5
                 continue;
             }
             auto t1 = high_resolution_clock::now();
-            auto compressed = compress_frequent(strings, sample_size, support);
+            auto compressed = compress_frequent(strings, 0.003, 0.03, prune);
             auto t2 = high_resolution_clock::now();
             compressedSize += compressed.length();
             duration += duration_cast<microseconds>( t2 - t1 ).count();
@@ -250,11 +255,11 @@ void compress_file_frequent_varying(string file, int repeat = 1){
         for (int i = 0; i < repeat; i++) {
             ostringstream ss;
             ss << outdir << "sample_support_count/" << file << "_sample_" << sample_size << ".txt";
-            auto f_stat = compress_file_frequent(indir + file + ".txt", sample_size, sample_size / 20);
+            auto f_stat = compress_file_frequent(indir + file + ".txt", sample_size, sample_size / 20, true);
             append_stat(ss.str(), f_stat);
             ss.str("");
             ss << outdir << "sample/" << file << "_sample_" << sample_size << ".txt";
-            f_stat = compress_file_frequent(indir + file + ".txt", sample_size, 5);
+            f_stat = compress_file_frequent(indir + file + ".txt", sample_size, 5, true);
             append_stat(ss.str(), f_stat);
         };
     }
@@ -264,7 +269,7 @@ void compress_file_frequent_varying(string file, int repeat = 1){
         for (int i = 0; i < repeat; i++) {
             ostringstream ss;
             ss << outdir << "support_count/" << file << "_sc_" << support << ".txt";
-            auto f_stat = compress_file_frequent(indir + file + ".txt", 100, support); // Try 200?
+            auto f_stat = compress_file_frequent(indir + file + ".txt", 100, support, true); // Try 200?
             append_stat(ss.str(), f_stat);
         };
     }
@@ -272,29 +277,29 @@ void compress_file_frequent_varying(string file, int repeat = 1){
 
 int main(int argc, const char * argv[]) {
     vector<string> infiles = {
-//        "gen-iso8601",
-//        "gen-uri",
-//        "gen-email",
-//        "gen-user_agent",
-//        "gen-credit_card_number",
-//        "gen-credit_card_full",
-//        "gen-sha1",
         "gen-text",
-//        "gen-phone_number",
-//        "gen-address",
-//        "gen-name",
-        
-        
+        "gen-phone_number",
+        "gen-address",
+        "gen-name",
+        "gen-iso8601",
+        "gen-uri",
+        "gen-email",
+        "gen-user_agent",
+        "gen-credit_card_number",
+        "gen-credit_card_full",
+        "gen-sha1",
     };
     
     for(int j = 0; j < 10; j++) {
         cout << "iteration " << j << ":" << endl;
         for (string& file : infiles) {
             cout << "Benchmarking " << file << endl;
-            auto f_stat = compress_file_frequent(indir + file + ".txt");
-            //auto s_stat = compress_file_snappy(indir + file + ".txt");
-            //append_stat(outdir + "snappy_" + file + ".txt", s_stat);
-            //append_stat(outdir + "frequent_" + file + ".txt", f_stat);
+            auto f_stat = compress_file_frequent(indir + file + ".txt", false);
+            append_stat(outdir + "frequent_" + file + ".txt", f_stat);
+            auto s_stat = compress_file_snappy(indir + file + ".txt");
+            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            auto fp_stat = compress_file_frequent(indir + file + ".txt", true);
+            append_stat(outdir + "frequent_prune_" + file + ".txt", fp_stat);
 //            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
 //            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
 //            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");

@@ -18,6 +18,7 @@
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; };
 		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; };
 		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; };
+		D8AC4FB91CE06394003C0782 /* ZlibCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8AC4FB71CE06394003C0782 /* ZlibCompressor.cpp */; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 		D8EAF2701BE4164200D68BBE /* libFastPFor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8EAF26F1BE4164200D68BBE /* libFastPFor.a */; };
 		D8F8F24B1CC17C24008BF009 /* RePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8F8F2491CC17C24008BF009 /* RePair.cpp */; };
@@ -59,13 +60,14 @@
 		D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequentPatternDecompressor.cpp; sourceTree = "<group>"; };
 		D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternDecompressor.hpp; sourceTree = "<group>"; };
 		D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PatternGrowthCommons.hpp; sourceTree = "<group>"; };
+		D8AC4FB71CE06394003C0782 /* ZlibCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZlibCompressor.cpp; sourceTree = "<group>"; };
+		D8AC4FB81CE06394003C0782 /* ZlibCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZlibCompressor.hpp; sourceTree = "<group>"; };
 		D8DD8EA61BD84E070059803D /* FrequentPatternCompressor */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FrequentPatternCompressor; sourceTree = "<group>"; };
 		D8DD8EAC1BD866B50059803D /* libsnappy.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsnappy.a; sourceTree = "<group>"; };
 		D8EAF26F1BE4164200D68BBE /* libFastPFor.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFastPFor.a; sourceTree = "<group>"; };
 		D8F8F2491CC17C24008BF009 /* RePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RePair.cpp; sourceTree = "<group>"; };
 		D8F8F24A1CC17C24008BF009 /* RePair.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RePair.hpp; sourceTree = "<group>"; };
 		D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRePair.cpp; sourceTree = "<group>"; };
-		D8F8F24D1CC2DF19008BF009 /* TestRePair.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestRePair.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,8 @@
 				D8F8F24A1CC17C24008BF009 /* RePair.hpp */,
 				D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */,
 				D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */,
+				D8AC4FB71CE06394003C0782 /* ZlibCompressor.cpp */,
+				D8AC4FB81CE06394003C0782 /* ZlibCompressor.hpp */,
 				D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */,
 				D85FC2E91BD8415F0058CD6D /* snappy */,
 				D82DB6251BD18DA400249E13 /* main.cpp */,
@@ -127,7 +131,6 @@
 				D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */,
 				D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */,
 				D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */,
-				D8F8F24D1CC2DF19008BF009 /* TestRePair.hpp */,
 			);
 			path = FrequentPatternCompressor;
 			sourceTree = "<group>";
@@ -195,6 +198,7 @@
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
 				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
+				D8AC4FB91CE06394003C0782 /* ZlibCompressor.cpp in Sources */,
 				D8F8F24B1CC17C24008BF009 /* RePair.cpp in Sources */,
 				D80CFEEA1BD70DD700121CA8 /* Utils.cpp in Sources */,
 				D82DB6261BD18DA400249E13 /* main.cpp in Sources */,
@@ -244,7 +248,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/usr/local/Cellar/boost/1.60.0_1/include;",
-					/usr/local/include,
+					"/usr/local/include;",
+					"/usr/local/Cellar/zlib/1.2.8/include;",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -285,7 +290,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/usr/local/Cellar/boost/1.60.0_1/include;",
-					/usr/local/include,
+					"/usr/local/include;",
+					"/usr/local/Cellar/zlib/1.2.8/include;",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

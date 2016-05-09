@@ -4,7 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>FrequentPatternCompressor.xcscheme</key>
+		<key>FrequentPatternCompressor Debug.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>FrequentPatternCompressor Release.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
