@@ -23,9 +23,9 @@
 using namespace std::chrono;
 using namespace std;
 
-char out[50 * 1024 * 1024];
+char out[100 * 1024 * 1024];
 int indexEnd = 0;
-uint32_t indices[50*1024*1024]; // Dynamic or static no difference
+uint32_t indices[100*1024*1024]; // Dynamic or static no difference
 int outEnd = 0;
 
 vector<Node*> leftNodes; // No string should be longer than 255
@@ -60,7 +60,9 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, double
     indexEnd = 0;
     int sample_size = ceil(strings.size() * sample_rate);
     sample_size = min(sample_size, (int)strings.size());
-    int support = max(ceil(sample_size * rel_support), 2.0);
+    this->sampleSize = sample_size;
+    //sample_size = min(sample_size, 100);
+    int support = max(ceil(sample_size * rel_support), 4.0);
     vector<const string*> sample(sample_size);
     srand((unsigned)time(NULL));
 
@@ -72,6 +74,8 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, double
     
 //    RePair repair;
 //    Trie* trie = repair.getPatternTrie(sample);
+    
+    patternNum = trie->size;
     
     patterns.reserve(strings.size() + 256);
     patterns.push_back("0");

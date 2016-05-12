@@ -48,20 +48,10 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsNoPrune(Trie* tree, int pref
             tree->array[*index] = *itr;
         }
         
-        //        if (prefixLen < 2) {
         DepthFirstSearchForFrequentPatternsNoPrune(tree, prefixLen + 1,
                                                    tree->currNode->patternPositions, strings, minSupport);
-        //        }
-        //        else {
-        //
-        //            DepthFirstSearchForFrequentPatternsDeep(tree, prefixLen + 1, tree->currNode->patternPositions, strings, minSupport);
-        //        }
         tree->currNode = currNode;
     }
-    //    if (children.size() == 0) {
-    //        patternNum++;
-    //        patternLenSum += prefixLen;
-    //    }
 }
 
 void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int prefixLen,
@@ -109,10 +99,6 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int pref
         }
         tree->currNode = currNode;
     }
-//    if (children.size() == 0) {
-//        patternNum++;
-//        patternLenSum += prefixLen;
-//    }
 }
 
 void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixLen,
@@ -149,11 +135,10 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsDeep(Trie* tree, int prefixL
             projected[poss].clear();
         }
         ls.clear();
-        //patternLenSum += prefixLen;
-        //patternNum++;
         return;
     }
     
+    tree->size++;
     tree->currNode->partial += max;
     tree->currNode->indices.resize(tree->currNode->indices.size() + 1);
     tree->currNode->patternPositions.swap(projected[max]);

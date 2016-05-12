@@ -38,5 +38,7 @@ public:
     int charNum;
     long forwardCoverTime;
     string Compress(const vector<string>& strings, double sample_rate = 100, double rel_support = 0.05, bool prune = false);
+    int patternNum;
+    int sampleSize;
 };
 #endif /* FrequentPatternCompressor_hpp */

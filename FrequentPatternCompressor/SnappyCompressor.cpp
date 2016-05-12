@@ -12,5 +12,5 @@
 string SnappyCompressor::Compress(const string& data) {
     string out;
     snappy::Compress(data.c_str(), data.length(), &out);
-    return out;
+    return move(out);
 }
