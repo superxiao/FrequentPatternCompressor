@@ -21,7 +21,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsNoPrune(Trie* tree, int pref
         const string& str = *strings[prefixPos.stringIndex];
         size_t nextCharPos = prefixPos.positionInString + prefixLen;
         if (nextCharPos < str.length()) {
-            uint8_t c = str[nextCharPos]; // TODO better way?
+            uint8_t c = *reinterpret_cast<const uint8_t*>(&str[nextCharPos]); // TODO better way?
             projected[c].push_back(prefixPos);
             if (projected[c].size() == 1) {
                 ls.push_back(c);
@@ -62,7 +62,7 @@ void PrefixSpan::DepthFirstSearchForFrequentPatternsShallow(Trie* tree, int pref
         const string& str = *strings[prefixPos.stringIndex];
         size_t nextCharPos = prefixPos.positionInString + prefixLen;
         if (nextCharPos < str.length()) {
-            uint8_t c = str[nextCharPos]; // TODO better way?
+            uint8_t c = *reinterpret_cast<const uint8_t*>(&str[nextCharPos]); // TODO better way?
             projected[c].push_back(prefixPos);
             if (projected[c].size() == 1) {
                 ls.push_back(c);

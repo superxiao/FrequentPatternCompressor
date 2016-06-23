@@ -25,6 +25,8 @@ private:
     
     void ForwardCoverWithLookAhead(const string& string, Trie* trie);
     
+    void ForwardCoverWithLookAhead2(const string& string, Trie* trie);
+    
     void ForwardCoverWithGappedPhrases(const string& string, Trie* trie);
     
     inline void UseCurrentPattern(Node* node);
@@ -37,7 +39,7 @@ private:
 public:
     int charNum;
     long forwardCoverTime;
-    string Compress(const vector<string>& strings, double sample_rate = 100, double rel_support = 0.05, bool prune = false);
+    string Compress(const vector<string>& strings, double sample_rate = 0.005, int support = 5, bool prune = true, bool lookahead = false);
     int patternNum;
     int sampleSize;
 };

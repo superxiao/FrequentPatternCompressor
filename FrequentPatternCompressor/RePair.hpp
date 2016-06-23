@@ -56,13 +56,13 @@ struct ThreadedCell {
 
 class RePair {
 public:
-    vector<string> getPhrases(const vector<string>& strings);
-    Trie* getPatternTrie(const vector<string>& strings);
+    vector<string> getPhrases(const vector<const string*>& strings);
+    Trie* getPatternTrie(const vector<const string*>& strings);
     
 private:
-    inline void initRePair(const vector<string>& strings);
-    inline string getNextPair(const vector<string>& strings);
-    inline PairList* appendPairCell(const vector<string>& strings, ThreadedCell* cell, uint16_t firstSymbol, uint16_t secondSymbol);
+    inline void initRePair(const vector<const string*>& strings);
+    inline string getNextPair(const vector<const string*>& strings);
+    inline PairList* appendPairCell(const vector<const string*>& strings, ThreadedCell* cell, uint16_t firstSymbol, uint16_t secondSymbol);
     inline void removePairCell(ThreadedCell* cell);
 };
 

@@ -20,7 +20,7 @@ bool compare_pair_node::operator()(PairList* const& n1, PairList* const& n2) con
     return n1->count < n2->count;
 }
 
-vector<string> RePair::getPhrases(const vector<string> &strings) {
+vector<string> RePair::getPhrases(const vector<const string*> &strings) {
     initRePair(strings);
     vector<string> phrases;
     string phrase = getNextPair(strings);
@@ -31,7 +31,7 @@ vector<string> RePair::getPhrases(const vector<string> &strings) {
     return phrases;
 }
 
-void RePair::initRePair(const vector<string> & strings) {
+void RePair::initRePair(const vector<const string*> & strings) {
     
     nextUnusedSymbol = 256;
     for (auto& kv : pairTable) {
@@ -45,8 +45,8 @@ void RePair::initRePair(const vector<string> & strings) {
     }
     threadedArray.resize(strings.size());
     for (int i = 0; i < strings.size(); i++) {
-        threadedArray[i].resize(strings[i].size());
-        for (int j = 0; j < strings[i].size() - 1; j++) {
+        threadedArray[i].resize(strings[i]->size());
+        for (int j = 0; j < strings[i]->size() - 1; j++) {
             ThreadedCell& node = threadedArray[i][j];
             node.i = i;
             node.j = j;
@@ -54,9 +54,9 @@ void RePair::initRePair(const vector<string> & strings) {
             node.nextPair = NULL;
             node.prevPair = NULL;
             node.symbolLen = 1;
-            node.symbol = strings[i][j];
-            threadedArray[i][j+1].symbol = strings[i][j+1];
-            appendPairCell(strings, &node, node.symbol, strings[i][j+1]);
+            node.symbol = (uint8_t)(*strings[i])[j];
+            threadedArray[i][j+1].symbol = (uint8_t)(*strings[i])[j+1];
+            appendPairCell(strings, &node, node.symbol, (uint8_t)(*strings[i])[j+1]);
         }
     }
     for (auto& kv : pairTable) {
@@ -65,7 +65,7 @@ void RePair::initRePair(const vector<string> & strings) {
     }
 }
 
-PairList* RePair::appendPairCell(const vector<string> & strings, ThreadedCell *cell, uint16_t firstSymbol, uint16_t secondSymbol) {
+PairList* RePair::appendPairCell(const vector<const string*> & strings, ThreadedCell *cell, uint16_t firstSymbol, uint16_t secondSymbol) {
     SymbolPair pair {firstSymbol, secondSymbol}; // initilize using newly created symbol and the other symbol
     //string pairPhrase = strings[cell->i].substr(cell->j, firstSymbolLen + secondSymbolLen);
     PairList*& list = pairTable[*reinterpret_cast<uint32_t*>(&pair)];
@@ -117,7 +117,7 @@ void RePair::removePairCell(ThreadedCell *cell) {
 }
 
 
-string RePair::getNextPair(const vector<string> & strings) {
+string RePair::getNextPair(const vector<const string*> & strings) {
     if (pq.size() == 0) {
         return "";
     }
@@ -193,7 +193,7 @@ string RePair::getNextPair(const vector<string> & strings) {
     return phrase;
 }
 
-Trie* RePair::getPatternTrie(const vector<string>& strings) {
+Trie* RePair::getPatternTrie(const vector<const string*>& strings) {
     auto patterns = this->getPhrases(strings);
 //    unordered_set<string> patternSet(patterns.begin(), patterns.end());
 //    for (const string& pattern : patternSet) {

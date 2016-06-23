@@ -20,7 +20,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
           "[FrequentPatternCompressor]" ) {
     FrequentPatternCompressor compressor;
     auto dates = random_dates(1000);
-    auto compressed = compressor.Compress(dates);
+    auto compressed = compressor.Compress(dates, 0.1, 5, false, true);
     FrequentPatternDecompressor decompressor;
     auto decompressed = decompressor.Decompress(compressed);
     REQUIRE(dates.size() == decompressed.size());
@@ -54,7 +54,7 @@ TEST_CASE( "FrequentPatternCompressor should compress data in a way that "
             strings.push_back(line);
             uncompressedSize += 2 + line.size();
         }
-        compressed = compressor2.Compress(strings);
+        compressed = compressor2.Compress(strings, 0.1, 5, false, true);
         cout << "Compression ratio: " << compressed.size() * 1.0 / uncompressedSize << endl;
         decompressed = decompressor.Decompress(compressed);
         REQUIRE(strings.size() == decompressed.size());

@@ -31,6 +31,7 @@ int outEnd = 0;
 vector<Node*> leftNodes; // No string should be longer than 255
 vector<Node*> rightNodes;
 vector<Node*> rightMaxNodes;
+vector<vector<Node*>> arraysOfNodes;
 
 void CompareTrie(Node* trie1, Node* trie2) {
     for(int i = 0; i < 256; i++) {
@@ -51,24 +52,25 @@ void CompareTrie(Node* trie1, Node* trie2) {
     }
 }
 
-string FrequentPatternCompressor::Compress(const vector<string>& strings, double sample_rate, double rel_support, bool prune) {
-    
-//    leftNodes.resize(1000);
-//    rightNodes.resize(1000);
-//    rightMaxNodes.resize(1000);
-    
+string FrequentPatternCompressor::Compress(const vector<string>& strings, double sample_rate, int support, bool prune, bool lookahead) {
+    if (lookahead) {
+        leftNodes.resize(1000);
+        rightNodes.resize(1000);
+        rightMaxNodes.resize(1000);
+    }
     indexEnd = 0;
     int sample_size = ceil(strings.size() * sample_rate);
     sample_size = min(sample_size, (int)strings.size());
     this->sampleSize = sample_size;
     //sample_size = min(sample_size, 100);
-    int support = max(ceil(sample_size * rel_support), 4.0);
     vector<const string*> sample(sample_size);
     srand((unsigned)time(NULL));
 
     for (size_t i = 0; i < sample_size; i++) {
         sample[i] = &strings[rand() % strings.size()];
     }
+    
+    support = max(4.0, ceil(0.03 * sample.size()));
     
     Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support, prune);
     
@@ -86,8 +88,12 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, double
 
     if (!prune) {
         for (const string& s : strings) {
-            ForwardCoverShallow(s, trie);
-//            ForwardCoverWithLookAhead(s, trie);
+            if (lookahead) {
+                ForwardCoverWithLookAhead(s, trie);
+            } else {
+                ForwardCoverShallow(s, trie);
+//                ForwardCoverWithGappedPhrases(s, trie);
+            }
             uncompressed_size += s.length();
         }
     }
@@ -180,10 +186,10 @@ void FrequentPatternCompressor::ForwardCoverWithLookAhead(const string& string, 
     Node* rightNode = root;
     int rightMaxBegin = 0;
     int rightMaxLen = 0;
+    int rightBegin = 0;
     while(i != string.size()) {
         int leftBegin = i;
         int leftLen = 0;
-        
         if (rightMaxBegin) {
             leftBegin = rightMaxBegin;
             leftLen = rightMaxLen;
@@ -203,13 +209,14 @@ void FrequentPatternCompressor::ForwardCoverWithLookAhead(const string& string, 
                 i++;
                 leftLen++;
             }
+            rightBegin = leftBegin + 1;
         }
         
-        int leftEnd = leftBegin + 2;
+        int leftEnd = leftBegin + leftLen;
         rightMaxBegin = 0;
         rightMaxLen = leftLen;
         int rightLen = 0;
-        for (int rightBegin = leftBegin + 1; rightBegin != leftEnd; rightBegin++) {
+        for (; rightBegin != leftEnd; rightBegin++) {
             rightNode = root;
             int j = rightBegin;
             rightLen = 0;
@@ -232,6 +239,9 @@ void FrequentPatternCompressor::ForwardCoverWithLookAhead(const string& string, 
                 rightLen++;
             }
         }
+        if(rightMaxBegin) {
+            rightBegin = leftEnd;
+        }
         
         if (rightMaxBegin == 0) {
             UseCurrentPattern(leftNode);
@@ -252,7 +262,7 @@ void FrequentPatternCompressor::ForwardCoverWithGappedPhrases(const string& stri
     int i = 0;
     int j = 0;
     while(i < string.size()) {
-        auto c = string[i];
+        uint8_t c = string[i];
         Node* child = currNode->children[c];
         if (child) {
             if (child->isCandidate) {
@@ -264,7 +274,8 @@ void FrequentPatternCompressor::ForwardCoverWithGappedPhrases(const string& stri
             UseCurrentPattern(candidateNode);
             j++;
             i = j;
-            currNode = root->children[string[i]];
+            c = string[i];
+            currNode = root->children[c];
             candidateNode = currNode;
         }
         i++;
