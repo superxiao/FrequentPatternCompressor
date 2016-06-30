@@ -18,7 +18,6 @@
 		D82DB6311BD1961E00249E13 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D82DB62F1BD1961E00249E13 /* Node.cpp */; };
 		D84419ED1CE0677D0009EC86 /* ZlibCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D84419EB1CE0677D0009EC86 /* ZlibCompressor.cpp */; };
 		D84419EF1CE0742A0009EC86 /* libboost_iostreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D84419EE1CE0742A0009EC86 /* libboost_iostreams.a */; };
-		D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */; };
 		D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */; };
 		D8DD8EAD1BD866B50059803D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8DD8EAC1BD866B50059803D /* libsnappy.a */; };
 		D8EAF2701BE4164200D68BBE /* libFastPFor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8EAF26F1BE4164200D68BBE /* libFastPFor.a */; };
@@ -59,8 +58,6 @@
 		D84419EC1CE0677D0009EC86 /* ZlibCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ZlibCompressor.hpp; sourceTree = "<group>"; };
 		D84419EE1CE0742A0009EC86 /* libboost_iostreams.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_iostreams.a; path = ../../../../../usr/local/Cellar/boost/1.60.0_1/lib/libboost_iostreams.a; sourceTree = "<group>"; };
 		D85FC2E91BD8415F0058CD6D /* snappy */ = {isa = PBXFileReference; lastKnownFileType = folder; path = snappy; sourceTree = "<group>"; };
-		D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnappyCompressor.cpp; sourceTree = "<group>"; };
-		D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SnappyCompressor.hpp; sourceTree = "<group>"; };
 		D8A2E8751BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrequentPatternDecompressor.cpp; sourceTree = "<group>"; };
 		D8A2E8761BDDD5A700EA0A1F /* FrequentPatternDecompressor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FrequentPatternDecompressor.hpp; sourceTree = "<group>"; };
 		D8ABE6191BF672C3001D9C20 /* PatternGrowthCommons.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PatternGrowthCommons.hpp; sourceTree = "<group>"; };
@@ -131,8 +128,6 @@
 				D80CFEE51BD6DC0700121CA8 /* TestPrefixSpan.cpp */,
 				D80CFEE81BD70DD700121CA8 /* Utils.cpp */,
 				D80CFEE91BD70DD700121CA8 /* Utils.hpp */,
-				D85FC2EA1BD841AD0058CD6D /* SnappyCompressor.cpp */,
-				D85FC2EB1BD841AD0058CD6D /* SnappyCompressor.hpp */,
 				D8F8F24C1CC2DF19008BF009 /* TestRePair.cpp */,
 				D8F8F24D1CC2DF19008BF009 /* TestRePair.hpp */,
 				D84419EB1CE0677D0009EC86 /* ZlibCompressor.cpp */,
@@ -202,7 +197,6 @@
 				D80CFEE11BD6DB9300121CA8 /* TestFrequentPatternCompressor.cpp in Sources */,
 				D8A2E8771BDDD5A700EA0A1F /* FrequentPatternDecompressor.cpp in Sources */,
 				D82DB6311BD1961E00249E13 /* Node.cpp in Sources */,
-				D85FC2EC1BD841AD0058CD6D /* SnappyCompressor.cpp in Sources */,
 				D80CFEE61BD6DC0800121CA8 /* TestPrefixSpan.cpp in Sources */,
 				D84419ED1CE0677D0009EC86 /* ZlibCompressor.cpp in Sources */,
 				D8F8F24B1CC17C24008BF009 /* RePair.cpp in Sources */,

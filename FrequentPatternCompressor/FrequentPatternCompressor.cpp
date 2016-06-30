@@ -70,14 +70,14 @@ string FrequentPatternCompressor::Compress(const vector<string>& strings, double
         sample[i] = &strings[rand() % strings.size()];
     }
     
-    support = max(4.0, ceil(0.03 * sample.size()));
+//    support = max(4.0, ceil(0.03 * sample.size()));
     
     Trie* trie = PrefixSpan::GetFrequentPatterns(sample, support, prune);
     
 //    RePair repair;
 //    Trie* trie = repair.getPatternTrie(sample);
     
-    patternNum = trie->size;
+    num_trie_nodes = trie->size;
     
     patterns.reserve(strings.size() + 256);
     patterns.push_back("0");

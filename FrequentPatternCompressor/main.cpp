@@ -15,7 +15,6 @@
 #include "FrequentPatternCompressor.hpp"
 #include "Utils.hpp"
 #include <chrono>
-#include "SnappyCompressor.hpp"
 #include "FrequentPatternDecompressor.hpp"
 #include "snappy/snappy.h"
 #include "ZlibCompressor.hpp"
@@ -23,35 +22,34 @@
 using namespace std;
 using namespace std::chrono;
 
-static const int LINES_PER_BLOCK = 100000;
 static const bool PRINT_STATS = true;
-static const int REPEAT = 1;
 static const int BLOCK_SIZE = 4 * 1024 * 1024;
-static const unsigned long OVERALL_SIZE = 5L * 1024 * 1024 * 1024;
+static const unsigned long OVERALL_SIZE = 1L * 1024 * 1024 * 1024;
 
-struct cstat {
+struct comp_stat {
     unsigned long original_size;
     unsigned long compressed_size;
     double compression_ratio;
     double compression_time;
     double decompression_time;
-    double pattern_num;
+    double num_trie_nodes;
     double sample_size;
 };
 
 enum UseCompressor{use_snappy, use_gzip};
 
-void append_stat(string file, cstat s) {
-    fstream stream(file, fstream::app);
+void log_stat(string log_file, comp_stat s) {
+    fstream stream(log_file, fstream::app);
     stream << s.original_size << " " << s.compressed_size << " "
     << s.compression_ratio << " " << s.compression_time << " "
-    << s.decompression_time << " " << s.pattern_num << " " << s.sample_size << endl;
+    << s.decompression_time << " " << s.num_trie_nodes << " "
+    << s.sample_size << endl;
     stream.close();
 }
 
 inline string compress_snappy(const string& data) {
-    auto compressor = SnappyCompressor();
-    string compressed = compressor.Compress(data);
+    string compressed;
+    snappy::Compress(data.c_str(), data.length(), &compressed);
     return move(compressed);
 }
 
@@ -72,6 +70,17 @@ inline string decompress_gzip(const string& compressed) {
     return move(compressor.Decompress(compressed));
 }
 
+
+inline string compress_frequent(const vector<string>& strings, double sample_rate = 0.005, int support = 5, bool prune = false, bool lookahead = false, int* num_trie_nodes = NULL, int* sample_size = NULL) {
+    auto compressor = FrequentPatternCompressor();
+    string compressed = compressor.Compress(strings, sample_rate, support, prune, lookahead);
+    if (num_trie_nodes != NULL)
+        *num_trie_nodes = compressor.num_trie_nodes;
+    if (sample_size != NULL)
+        *num_trie_nodes = compressor.sampleSize;
+    return move(compressed);
+}
+
 inline string decompress_frequent(const string& compressed) {
     auto decompressor = FrequentPatternDecompressor();
     vector<uint32_t> lens;
@@ -79,32 +88,24 @@ inline string decompress_frequent(const string& compressed) {
     return move(decompressed);
 }
 
-inline string compress_frequent(const vector<string>& strings, int* pattern_num = NULL, int* sample_size = NULL, double sample_rate = 0.005, int support = 5, bool prune = false, bool lookahead = false) {
-    auto compressor = FrequentPatternCompressor();
-    string compressed = compressor.Compress(strings, sample_rate, support, prune, lookahead);
-    if (pattern_num != NULL)
-        *pattern_num = compressor.patternNum;
-    if (sample_size != NULL)
-        *sample_size = compressor.sampleSize;
-    return move(compressed);
-}
-
-inline void print_stat(long compressed_size, long original_size,
-                long compression_time, long decompression_time) {
+inline void print_stat(comp_stat s) {
+    auto bytes_to_mb = [](long bytes) { return bytes / 1024.0 / 1024.0; };
+    auto microsec_to_millisec = [](long millisec) {return millisec / 1000.0;};
+    auto microsec_to_sec = [](long millisec) {return millisec / 1.0e6;};
     if (PRINT_STATS) {
         cout << fixed << setprecision(3);
-        cout << "Compression ratio:\t" << 1.0 * compressed_size / original_size << endl;
-        cout << "Original Size:\t\t" << original_size / 1024.0 / 1024 << " MB" << endl;
-        cout << "Compressed Size:\t" << compressed_size / 1024.0 / 1024 << " MB" << endl;
-        cout << "Compression Time:\t" << compression_time / 1000.0 << " ms" << endl;
-        cout << "Decompression Time:\t" << decompression_time / 1000.0 << " ms" << endl;
-        cout << "Compression speed:\t" << original_size / 1024.0/ 1024.0 / (compression_time / 1000.0 / 1000.0)
+        cout << "Compression ratio:\t" << 1.0 * s.compressed_size / s.original_size << endl;
+        cout << "Original Size:\t\t" << bytes_to_mb(s.original_size) << " MB" << endl;
+        cout << "Compressed Size:\t" << bytes_to_mb(s.compressed_size) << " MB" << endl;
+        cout << "Compression Time:\t" << microsec_to_millisec(s.compression_time) << " ms" << endl;
+        cout << "Decompression Time:\t" << microsec_to_millisec(s.decompression_time) << " ms" << endl;
+        cout << "Compression speed:\t" << bytes_to_mb(s.original_size) / microsec_to_sec(s.compression_time)
         << " MB/s" << endl;
         cout << endl;
     }
 }
 
-cstat compress_file(string file, UseCompressor useCompressor, string outfile) {
+comp_stat compress_file(string file, UseCompressor useCompressor, string outfile) {
     unsigned long size = 0;
     unsigned long compressedSize = 0;
     long duration = 0;
@@ -154,7 +155,7 @@ cstat compress_file(string file, UseCompressor useCompressor, string outfile) {
             t2 = high_resolution_clock::now();
             decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
             long block_decomp_duration = duration_cast<microseconds>( t2 - t1 ).count();
-            cstat block_stat = {
+            comp_stat block_stat = {
                 data.size(), compressed.length(),
                 compressed.length() * 1.0 / data.size(),
                 block_duration * 1.0 / 1000,
@@ -162,23 +163,23 @@ cstat compress_file(string file, UseCompressor useCompressor, string outfile) {
                 0,
                 0
             };
-            append_stat(outfile, block_stat);
+//            log_stat(outfile, block_stat);
         }
         s.close();
     }
-    print_stat(compressedSize, size, duration, decompressDuration);
-    cstat s = {
+    comp_stat s = {
         size, compressedSize,
         compressedSize * 1.0 / size,
         duration * 1.0 / 1000,
         decompressDuration * 1.0 / 1000, 0, 0};
+    print_stat(s);
     return s;
 }
 
 const string indir = "/Users/xiaojianwang/Documents/workspace/benchmarks/gen/";
 const string outdir = indir + "out/";
 
-cstat compress_file_frequent(string file, string outfile, bool prune, double sample_rate = 0.005, int support = 5, bool lookahead = false, unsigned long overall_size = OVERALL_SIZE) {
+comp_stat compress_file_frequent(string file, string outfile, bool prune, double sample_rate = 0.05, int support = 5, bool lookahead = false, unsigned long overall_size = OVERALL_SIZE) {
     
     std::ifstream in(file, std::ifstream::ate | std::ifstream::binary);
     long file_size = in.tellg();
@@ -189,7 +190,7 @@ cstat compress_file_frequent(string file, string outfile, bool prune, double sam
     long decompressDuration = 0;
     unsigned long size = 0;
     unsigned long compressedSize = 0;
-    double totalPatternNum = 0;
+    double totalNumTrieNodes = 0;
     double totalSampleSize = 0;
     int blockNum = 0;
     for (int j = 0; size < overall_size; j++) {
@@ -216,10 +217,10 @@ cstat compress_file_frequent(string file, string outfile, bool prune, double sam
                 continue;
             }
             auto t1 = high_resolution_clock::now();
-            int pattern_num = 0, sample_size = 0;
-            auto compressed = compress_frequent(strings, &pattern_num, &sample_size, sample_rate, support, prune, lookahead);
+            int num_trie_nodes = 0, sample_size = 0;
+            auto compressed = compress_frequent(strings, sample_rate, support, prune, lookahead, &num_trie_nodes, &sample_size);
             auto t2 = high_resolution_clock::now();
-            totalPatternNum += pattern_num;
+            totalNumTrieNodes += num_trie_nodes;
             totalSampleSize += sample_size;
             blockNum++;
             compressedSize += compressed.length();
@@ -232,95 +233,35 @@ cstat compress_file_frequent(string file, string outfile, bool prune, double sam
             decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
             long block_decomp_duration = duration_cast<microseconds>( t2 - t1 ).count();
             
-            cstat block_stat = {
+            comp_stat block_stat = {
                 blockSize, compressed.length(),
                 compressed.length() * 1.0 / blockSize,
                 block_duration * 1.0 / 1000,
                 block_decomp_duration * 1.0 / 1000,
-                pattern_num * 1.0,
+                num_trie_nodes * 1.0,
                 sample_size * 1.0
             };
-            append_stat(outfile, block_stat);
+//            log_stat(outfile, block_stat);
         }
         s.close();
     }
-    print_stat(compressedSize, size, duration, decompressDuration);
-    cstat s = {
+    comp_stat s = {
         size, compressedSize,
         compressedSize * 1.0 / size,
         duration * 1.0 / 1000,
         decompressDuration * 1.0 / 1000,
-        totalPatternNum / blockNum,
+        totalNumTrieNodes / blockNum,
         totalSampleSize / blockNum
     };
+    print_stat(s);
     return s;
-}
-
-void compress_small_file_snappy(string file) {
-    string data;
-    ifstream s(file);
-    long size = 0;
-    for( string line; getline( s, line );)
-    {
-        auto len = line.length();
-        char* lenBytes = reinterpret_cast<char*>(&len);
-        data.insert(data.end(), lenBytes, lenBytes + 2);
-        data.append(line);
-    }
-    s.close();
-    size = data.size();
-    size *= REPEAT;
-    long compressedSize = 0;
-    long duration = 0;
-    long decompressDuration = 0;
-    for (int j = 0; j < REPEAT; j++) {
-        auto t1 = high_resolution_clock::now();
-        auto compressed = compress_snappy(data);
-        auto t2 = high_resolution_clock::now();
-        compressedSize += compressed.length();
-        duration += duration_cast<microseconds>( t2 - t1 ).count();
-        
-        t1 = high_resolution_clock::now();
-        auto decompressed = decomrpess_snappy(compressed);
-        t2 = high_resolution_clock::now();
-        decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
-    }
-    print_stat(compressedSize, size, duration, decompressDuration);
-}
-
-void compress_small_file_frequent(string file) {
-    vector<string> strings;
-    ifstream s(file);
-    long size = 0;
-    for(string line; getline(s, line);) {
-        strings.push_back(line);
-        size += line.length() + 2;
-    }
-    s.close();
-    size *= REPEAT;
-    long compressedSize = 0;
-    long duration = 0;
-    long decompressDuration = 0;
-    for (int j = 0; j < REPEAT; j++) {
-        auto t1 = high_resolution_clock::now();
-        auto compressed = compress_frequent(strings);
-        auto t2 = high_resolution_clock::now();
-        compressedSize += compressed.length();
-        duration += duration_cast<microseconds>( t2 - t1 ).count();
-        
-        t1 = high_resolution_clock::now();
-        auto decompressed = decompress_frequent(compressed);
-        t2 = high_resolution_clock::now();
-        decompressDuration += duration_cast<microseconds>( t2 - t1 ).count();
-    }
-    print_stat(compressedSize, size, duration, decompressDuration);
 }
 
 void compress_file_frequent_varying(string file, string outfolder, int repeat = 1, bool lookahead = false){
     
     vector<double> sample_rates = {0.001, 0.003, 0.005, 0.01, 0.02, 0.03, 0.05};
 //    vector<int> supports = {3, 5, 10, 15, 20, 30, 40, 50};
-//    vector<int> supports = {3};
+    vector<int> supports = {3};
     unsigned long total_size = OVERALL_SIZE;
     if (lookahead) {
         total_size = 1L * 1024 * 1024 * 1024;
@@ -331,80 +272,69 @@ void compress_file_frequent_varying(string file, string outfolder, int repeat = 
             ostringstream ss;
 //            ss << outdir << "sample_support_count/" << file << "_sample_" << sample_size << ".txt";
 //            auto f_stat = compress_file_frequent(indir + file + ".txt", sample_size, sample_size / 20, true);
-//            append_stat(ss.str(), f_stat);
+//            log_stat(ss.str(), f_stat);
             ss.str("");
 
             ss << outfolder << "sample/" << file << "_sample_" << sample_rate << ".txt";
             auto f_stat = compress_file_frequent(indir + file + ".txt", ss.str(), false, sample_rate, 5, lookahead, total_size);
-//            append_stat(ss.str(), f_stat);
+//            log_stat(ss.str(), f_stat);
 //            if (!lookahead) {
 //                ss.str("");
 //                ss << outfolder << "sample/" << file << "_sample_prune_" << sample_rate << ".txt";
 //                auto fp_stat = compress_file_frequent(indir + file + ".txt", ss.str(), true, sample_rate, 5, lookahead);
-////                append_stat(ss.str(), fp_stat);
+////                log_stat(ss.str(), fp_stat);
 //            }
         };
 
-//        for(int support : supports) {
-//            cout << "Benchmarking for " << file << ". Support count " << support << endl;
-//            ostringstream ss;
-//            ss << outfolder << "support/" << file << "_support_" << support << ".txt";
-//            auto f_stat = compress_file_frequent(indir + file + ".txt", ss.str(), false, 0.005, support, lookahead, total_size);
-////            append_stat(ss.str(), f_stat);
+        for(int support : supports) {
+            cout << "Benchmarking for " << file << ". Support count " << support << endl;
+            ostringstream ss;
+            ss << outfolder << "support/" << file << "_support_" << support << ".txt";
+            auto f_stat = compress_file_frequent(indir + file + ".txt", ss.str(), false, 0.005, support, lookahead, total_size);
+//            log_stat(ss.str(), f_stat);
 //            if(!lookahead) {
 //                ss.str("");
 //                ss << outfolder << "support/" << file << "_support_prune_" << support << ".txt";
 //                auto fp_stat = compress_file_frequent(indir + file + ".txt", ss.str(), true, 0.005, support, lookahead);
-////                append_stat(ss.str(), fp_stat);
+////                log_stat(ss.str(), fp_stat);
 //            }
-//        };
+        };
     }
 }
 
 int main(int argc, const char * argv[]) {
     vector<string> infiles = {
-        "gen-text",
-        "gen-phone_number",
-        "gen-address",
-        "gen-name",
-        "gen-iso8601",
-        "gen-uri",
-        "gen-email",
-        "gen-user_agent",
-        "gen-credit_card_number",
-        "gen-credit_card_full",
-        "gen-sha1",
-//        "reddit",
-//        "reddit_pure_comment",
-//        "NASA_access_log_Jul95",
-//        "wiki.1190153705",
-//        "clarknet_access_log_Aug28",
+//        "gen-text",
+//        "gen-phone_number",
+//        "gen-address",
+//        "gen-name",
+//        "gen-iso8601",
+//        "gen-uri",
+//        "gen-email",
+//        "gen-user_agent",
+//        "gen-credit_card_number",
+//        "gen-credit_card_full",
+//        "gen-sha1",
         "gen-fine_foods",
-        "gen-wiki-links",
-//        "ol_dump_authors_2016-04-30",
-//        "2013.csv"
+//        "gen-wiki-links",
     };
-
-//    for(int j = 0; j < 3; j++) {
-//        compress_file_frequent_varying("gen-iso8601", outdir, 1);
-//    }
     
     for(int j = 0; j < 10; j++) {
         cout << "iteration " << j << ":" << endl;
         for (string& file : infiles) {
             cout << "Benchmarking " << file << endl;
-//            auto f_stat = compress_file_frequent(indir + file + ".txt", outdir + "frequent_" + file + ".txt", false);
-//            append_stat(outdir + "frequent_" + file + ".txt", f_stat);
-            auto s_stat = compress_file(indir + file + ".txt", use_snappy, outdir + "snappy_" + file + ".txt");
-//            append_stat(outdir + "snappy_" + file + ".txt", s_stat);
+            auto f_stat = compress_file_frequent(indir + file + ".txt", outdir + "frequent_" + file + ".txt", true, 0.05, 5, false);
+//            log_stat(outdir + "frequent_" + file + ".txt", f_stat);
+//            auto s_stat = compress_file(indir + file + ".txt", use_snappy, outdir + "snappy_" + file + ".txt");
+//            log_stat(outdir + "snappy_" + file + ".txt", s_stat);
 //            auto fp_stat = compress_file_frequent(indir + file + ".txt", outdir + "frequent_prune_" + file + ".txt", true);
-//            append_stat(outdir + "frequent_prune_" + file + ".txt", fp_stat);
-            auto g_stat = compress_file(indir + file + ".txt", use_gzip, outdir + "gzip_" + file + ".txt");
-//            append_stat(outdir + "gzip_" + file + ".txt", g_stat);
+//            log_stat(outdir + "frequent_prune_" + file + ".txt", fp_stat);
+//            auto g_stat = compress_file(indir + file + ".txt", use_gzip, outdir + "gzip_" + file + ".txt");
+//            log_stat(outdir + "gzip_" + file + ".txt", g_stat);
 //            auto s_stat = compress_file_snappy("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
-//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
+//            log_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_snappy.txt", s_stat);
 //            auto f_stat = compress_file_frequent("/Users/xiaojianwang/Documents/workspace/benchmarks/xaa");
-//            append_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
+//            log_stat("/Users/xiaojianwang/Documents/workspace/benchmarks/RC_2015-01_frequent.txt", f_stat);
             
 //            compress_file_frequent_varying(file, outdir+"varying_repair/", 1);
 //            compress_file_frequent_varying(file, outdir+"varying/", 1);

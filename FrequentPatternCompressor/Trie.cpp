@@ -61,11 +61,11 @@ void Trie::BuildTrie(const vector<string> &strings) {
                 currNode->children[c] = new Node();
                 currNode->children[c]->prefix = currNode->prefix + char(c);
                 currNode->frequentChildren.push_back(currNode->children[c]);
+                size++;
             }
             currNode = currNode->children[c];
         }
         currNode->isCandidate = true;
-        size++;
     }
 }
     
